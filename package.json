@@ -9,6 +9,7 @@
   },
   "scripts": {
     "check": "node scripts/check.mjs",
+    "inspect": "node src/cli.mjs inspect",
     "test": "node --test"
   },
   "dependencies": {
