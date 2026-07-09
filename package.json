@@ -1,0 +1,17 @@
+{
+  "name": "chatgpt-desktop-linux",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Source-only ChatGPT DMG to Linux compatibility builder",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@electron/asar": "4.2.0"
+  }
+}
