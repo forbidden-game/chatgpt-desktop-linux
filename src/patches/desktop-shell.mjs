@@ -22,6 +22,18 @@ const REPLACEMENTS = [
     "process.platform!==`win32`&&process.platform!==`darwin`&&process.platform!==`linux`?null:",
   ],
   [
+    "this.tray.on(`click`,()=>{this.onTrayButtonClick()}),this.tray.on(`right-click`,()=>{this.openNativeTrayMenu()})",
+    "this.tray.on(`click`,()=>{this.onTrayButtonClick()}),process.platform===`linux`?this.tray.setContextMenu(require(`electron`).Menu.buildFromTemplate(this.getNativeTrayMenuItems())):this.tray.on(`right-click`,()=>{this.openNativeTrayMenu()})",
+  ],
+  [
+    "this.trayMenuThreads=e.trayMenuThreads;return",
+    "this.trayMenuThreads=e.trayMenuThreads,process.platform===`linux`&&this.tray.setContextMenu(require(`electron`).Menu.buildFromTemplate(this.getNativeTrayMenuItems()));return",
+  ],
+  [
+    "function b6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);",
+    "function b6(e){let t=(process.platform===`linux`?require(`electron`).Menu:c.Menu).buildFromTemplate([{role:`quit`}]);",
+  ],
+  [
     "};j&&we();let Ee=er(",
     "};(j||process.platform===`linux`)&&we();let Ee=er(",
   ],

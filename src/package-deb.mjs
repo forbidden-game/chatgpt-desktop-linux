@@ -28,6 +28,18 @@ export function packageFileName(version) {
   return `chatgpt-desktop_${validateVersion(version)}_amd64.deb`;
 }
 
+export function iconInstallPath() {
+  return join(
+    "usr",
+    "share",
+    "icons",
+    "hicolor",
+    "512x512",
+    "apps",
+    "chatgpt-desktop.png",
+  );
+}
+
 export function debianControl({ installedSizeKiB, version }) {
   validateVersion(version);
   if (!Number.isSafeInteger(installedSizeKiB) || installedSizeKiB < 1) {
@@ -96,10 +108,7 @@ export async function packageDeb(appDir, options = {}) {
   await mkdir(join(packageRoot, "opt"), { recursive: true });
   await mkdir(join(packageRoot, "usr", "bin"), { recursive: true });
   await mkdir(join(packageRoot, "usr", "share", "applications"), { recursive: true });
-  await mkdir(
-    join(packageRoot, "usr", "share", "icons", "hicolor", "1024x1024", "apps"),
-    { recursive: true },
-  );
+  await mkdir(dirname(join(packageRoot, iconInstallPath())), { recursive: true });
   await mkdir(join(packageRoot, "usr", "share", "doc", "chatgpt-desktop"), {
     recursive: true,
   });
@@ -128,16 +137,7 @@ export async function packageDeb(appDir, options = {}) {
   await chmod(desktop, 0o644);
   await copyFile(
     join(appTarget, "resources", "icon-chatgpt.png"),
-    join(
-      packageRoot,
-      "usr",
-      "share",
-      "icons",
-      "hicolor",
-      "1024x1024",
-      "apps",
-      "chatgpt-desktop.png",
-    ),
+    join(packageRoot, iconInstallPath()),
   );
   await copyFile(join(repoRoot, "LICENSE"), join(
     packageRoot,

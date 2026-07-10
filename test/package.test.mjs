@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   debianControl,
   desktopEntry,
+  iconInstallPath,
   packageFileName,
 } from "../src/package-deb.mjs";
 
@@ -31,4 +32,11 @@ test("desktop entry launches the package without claiming codex URLs", () => {
   assert.match(entry, /^StartupWMClass=chatgpt-desktop$/mu);
   assert.match(entry, /^Categories=Utility;$/mu);
   assert.doesNotMatch(entry, /MimeType|codex:\/\//u);
+});
+
+test("application icon is installed in a declared hicolor directory", () => {
+  assert.equal(
+    iconInstallPath(),
+    "usr/share/icons/hicolor/512x512/apps/chatgpt-desktop.png",
+  );
 });

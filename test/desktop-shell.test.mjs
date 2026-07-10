@@ -13,6 +13,9 @@ const fixture = [
   "function j9(e=1){return{color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Ane:kne,height:Math.round(One*e)}}",
   "if(process.platform===`win32`&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){",
   "async function ore(e){return process.platform!==`win32`&&process.platform!==`darwin`?null:(W9=!0,e)}",
+  "this.tray.on(`click`,()=>{this.onTrayButtonClick()}),this.tray.on(`right-click`,()=>{this.openNativeTrayMenu()})",
+  "async handleMessage(e){switch(e.type){case`tray-menu-threads-changed`:this.trayMenuThreads=e.trayMenuThreads;return}}",
+  "function b6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);return(Array.isArray(t)?t:t.items)[0]?.label??`Quit ${e}`}",
   "};j&&we();let Ee=er(",
 ].join(";");
 
@@ -29,6 +32,18 @@ test("Linux desktop shell reuses upstream tray and renders an opaque title overl
   assert.match(
     patched,
     /color:process\.platform===`linux`\?\(c\.nativeTheme\.shouldUseDarkColors\?`#1f1f1f`:`#f9f9f9`\):k9/,
+  );
+  assert.match(
+    patched,
+    /process\.platform===`linux`\?this\.tray\.setContextMenu\(require\(`electron`\)\.Menu\.buildFromTemplate\(this\.getNativeTrayMenuItems\(\)\)\)/,
+  );
+  assert.match(
+    patched,
+    /this\.trayMenuThreads=e\.trayMenuThreads,process\.platform===`linux`&&this\.tray\.setContextMenu/,
+  );
+  assert.match(
+    patched,
+    /process\.platform===`linux`\?require\(`electron`\)\.Menu:c\.Menu/,
   );
 });
 
