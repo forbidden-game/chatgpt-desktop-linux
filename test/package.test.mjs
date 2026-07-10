@@ -8,16 +8,16 @@ import {
   packageFileName,
 } from "../src/package-deb.mjs";
 
-test("packageFileName uses the upstream app version", () => {
+test("packageFileName uses the supplied app version", () => {
   assert.equal(
-    packageFileName("26.707.30751"),
-    "chatgpt-desktop_26.707.30751_amd64.deb",
+    packageFileName("1.2.3"),
+    "chatgpt-desktop_1.2.3_amd64.deb",
   );
   assert.throws(() => packageFileName("bad version"), /invalid Debian version/);
 });
 
 test("Debian control is manual-update and Ubuntu focused", () => {
-  const control = debianControl({ installedSizeKiB: 900_000, version: "26.707.30751" });
+  const control = debianControl({ installedSizeKiB: 900_000, version: "1.2.3" });
   assert.match(control, /^Package: chatgpt-desktop$/mu);
   assert.match(control, /^Architecture: amd64$/mu);
   assert.match(control, /^Depends: .*python3.*nodejs \(>= 18\).*util-linux/mu);

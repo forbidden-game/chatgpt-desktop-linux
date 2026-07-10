@@ -10,8 +10,8 @@ const REPLACEMENTS = [
     "case n.Vc.ChatGPT:return process.platform===`linux`?{dark:`icon-chatgpt.png`,light:`icon-chatgpt.png`}:{dark:`chatgpt-tray-dark.ico`,light:`chatgpt-tray-light.ico`}",
   ],
   [
-    "color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Ane:kne",
-    "color:process.platform===`linux`?(c.nativeTheme.shouldUseDarkColors?`#1f1f1f`:`#f9f9f9`):k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Ane:kne",
+    "color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?One:Dne",
+    "color:process.platform===`linux`?(c.nativeTheme.shouldUseDarkColors?`#1f1f1f`:`#f9f9f9`):k9,symbolColor:c.nativeTheme.shouldUseDarkColors?One:Dne",
   ],
   [
     "if(process.platform===`win32`&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){",
@@ -30,8 +30,8 @@ const REPLACEMENTS = [
     "this.trayMenuThreads=e.trayMenuThreads,process.platform===`linux`&&this.tray.setContextMenu(require(`electron`).Menu.buildFromTemplate(this.getNativeTrayMenuItems()));return",
   ],
   [
-    "function b6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);",
-    "function b6(e){let t=(process.platform===`linux`?require(`electron`).Menu:c.Menu).buildFromTemplate([{role:`quit`}]);",
+    "function v6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);",
+    "function v6(e){let t=(process.platform===`linux`?require(`electron`).Menu:c.Menu).buildFromTemplate([{role:`quit`}]);",
   ],
   [
     "};j&&we();let Ee=er(",

@@ -10,12 +10,12 @@ import {
 
 const fixture = [
   "function x_(e,t){switch(t){case n.Vc.ChatGPT:return{dark:`chatgpt-tray-dark.ico`,light:`chatgpt-tray-light.ico`}}}",
-  "function j9(e=1){return{color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Ane:kne,height:Math.round(One*e)}}",
+  "function j9(e=1){return{color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?One:Dne,height:Math.round(Ene*e)}}",
   "if(process.platform===`win32`&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){",
   "async function ore(e){return process.platform!==`win32`&&process.platform!==`darwin`?null:(W9=!0,e)}",
   "this.tray.on(`click`,()=>{this.onTrayButtonClick()}),this.tray.on(`right-click`,()=>{this.openNativeTrayMenu()})",
   "async handleMessage(e){switch(e.type){case`tray-menu-threads-changed`:this.trayMenuThreads=e.trayMenuThreads;return}}",
-  "function b6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);return(Array.isArray(t)?t:t.items)[0]?.label??`Quit ${e}`}",
+  "function v6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);return(Array.isArray(t)?t:t.items)[0]?.label??`Quit ${e}`}",
   "};j&&we();let Ee=er(",
 ].join(";");
 

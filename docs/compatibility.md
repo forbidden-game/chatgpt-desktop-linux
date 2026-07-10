@@ -3,9 +3,17 @@
 This document distinguishes measured behavior from planned work. A visible UI
 entry is not treated as proof that its Linux backend works.
 
-## Verified on Kubuntu
+## Build verified
 
-- ChatGPT `26.707.30751` with Electron `42.1.0`.
+- ChatGPT `26.707.31428` with Electron `42.1.0`.
+- complete assembly with all three fail-closed Linux patches applied.
+- deterministic Debian packaging and package-content smoke checks.
+
+## Runtime verified on Kubuntu
+
+The runtime checks below were last repeated with ChatGPT `26.707.30751` and
+Electron `42.1.0`:
+
 - packaged production mode with the official webview.
 - native Wayland, GPU render-node ownership, and Electron renderer sandbox.
 - opaque Linux title-bar controls that follow the system light/dark theme.
@@ -17,7 +25,6 @@ entry is not treated as proof that its Linux backend works.
 - idle foreground CPU around 1–2% across main, GPU, renderer, and Codex in
   repeated 8–10 second samples after startup.
 - empty `.git` directories do not trigger the Git-init polling loop.
-- deterministic Debian packaging from the same freshly assembled app.
 
 ## Preserved from the official DMG
 
