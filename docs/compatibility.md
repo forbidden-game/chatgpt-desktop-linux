@@ -8,6 +8,8 @@ entry is not treated as proof that its Linux backend works.
 - ChatGPT `26.707.30751` with Electron `42.1.0`.
 - packaged production mode with the official webview.
 - native Wayland, GPU render-node ownership, and Electron renderer sandbox.
+- opaque Linux title-bar controls that follow the system light/dark theme.
+- KDE StatusNotifier tray registration, close-to-tray, and tray activation.
 - Codex CLI `0.144.0` app-server handshake.
 - Chat, Codex, Plugins, Sites, project list, and composer rendering.
 - Fcitx 5 is attached under the Wayland session.

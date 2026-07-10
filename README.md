@@ -14,6 +14,7 @@ Codex Desktop Linux build framework as its product architecture.
 - native Wayland and GPU compositing by default
 - explicit X11 fallback
 - isolated ChatGPT Electron profile
+- KDE-compatible system tray and close-to-tray behavior
 - local Codex CLI backend discovery
 - manual application updates
 - one build command that emits a `.deb`
