@@ -1,0 +1,40 @@
+# Compatibility status
+
+This document distinguishes measured behavior from planned work. A visible UI
+entry is not treated as proof that its Linux backend works.
+
+## Verified on Kubuntu
+
+- ChatGPT `26.707.30751` with Electron `42.1.0`.
+- packaged production mode with the official webview.
+- native Wayland, GPU render-node ownership, and Electron renderer sandbox.
+- Codex CLI `0.144.0` app-server handshake.
+- Chat, Codex, Plugins, Sites, project list, and composer rendering.
+- Fcitx 5 is attached under the Wayland session.
+- idle foreground CPU around 1–2% across main, GPU, renderer, and Codex in
+  repeated 8–10 second samples after startup.
+- empty `.git` directories do not trigger the Git-init polling loop.
+- deterministic Debian packaging from the same freshly assembled app.
+
+## Preserved from the official DMG
+
+- Browser and Chrome resources, including Linux x64 native prebuilds.
+- Sites, Deep Research, Visualize, and the platform-neutral part of LaTeX.
+- official webview, skills, icons, and sound resources.
+
+## Deliberately not shipped yet
+
+- Computer Use and Record & Replay. Their official manifests and MCP commands
+  are macOS-specific and point to Mach-O `.app` binaries. They require a real
+  Linux adapter and independent tests.
+- the bundled ARM64 macOS `tectonic` binary. The LaTeX plugin remains and may
+  use a compatible system runtime.
+- the Chrome macOS extension host.
+
+## Not yet verified
+
+- end-to-end execution of every preserved plugin;
+- live X11 fallback beyond launcher argument tests;
+- installation over every supported Ubuntu/Kubuntu release;
+- `codex://` protocol registration, which the Debian package intentionally does
+  not claim.

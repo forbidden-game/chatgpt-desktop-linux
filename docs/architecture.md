@@ -33,7 +33,9 @@ that interface.
 - **assemble** creates a Linux application using the matching Electron runtime.
 - **patch** contains only behavior justified by an observed failure and test.
 - **package** turns a verified application directory into a Debian package.
-- **verify** checks artifact structure and isolated runtime behavior.
+
+Tests and release smoke checks verify artifact structure and isolated runtime
+behavior without adding another public command or framework.
 
 These are internal seams, not user-facing extension systems. v1 has one distro
 target and one package format, so it has no feature framework, package adapter

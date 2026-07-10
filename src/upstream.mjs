@@ -118,7 +118,7 @@ async function hashFile(path) {
   return hash.digest("hex");
 }
 
-async function findExecutable(names, envPath = process.env.PATH ?? "") {
+export async function findExecutable(names, envPath = process.env.PATH ?? "") {
   for (const directory of envPath.split(delimiter)) {
     if (!directory) continue;
     for (const name of names) {

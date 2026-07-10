@@ -6,10 +6,15 @@ const root = new URL("../", import.meta.url);
 const requiredFiles = [
   ".gitignore",
   "AGENTS.md",
+  "build.sh",
   "README.md",
   "NOTICE.md",
+  "native/package-lock.json",
+  "native/package.json",
   "docs/architecture.md",
+  "docs/compatibility.md",
   "package.json",
+  "runtime/webview_server.py",
 ];
 
 await Promise.all(requiredFiles.map((file) => access(new URL(file, root))));

@@ -8,11 +8,15 @@
     "node": ">=22"
   },
   "scripts": {
+    "app": "node src/cli.mjs app",
+    "build": "node src/cli.mjs build",
     "check": "node scripts/check.mjs",
     "inspect": "node src/cli.mjs inspect",
-    "test": "node --test"
+    "package": "node src/cli.mjs package build/app",
+    "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
-    "@electron/asar": "4.2.0"
+    "@electron/asar": "4.2.0",
+    "@electron/rebuild": "4.2.0"
   }
 }
