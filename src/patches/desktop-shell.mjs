@@ -1,4 +1,8 @@
 const MARKER = "/* chatgpt-linux: linux-desktop-shell */";
+const IDENTITY_MARKER = "/* chatgpt-linux: linux-desktop-identity */";
+const APP_NAME_SETUP = "a.app.setName(t.Na(Z,Q)),a.app.setPath(";
+const LINUX_APP_NAME_SETUP =
+  "a.app.setName(t.Na(Z,Q)),process.platform===`linux`&&a.app.setDesktopName(`chatgpt-desktop.desktop`),a.app.setPath(";
 
 const REPLACEMENTS = [
   [
@@ -40,10 +44,26 @@ export function applyLinuxDesktopShellPatch(source) {
   return `${MARKER}${patched}`;
 }
 
-export function selectMainBundle(names) {
-  const matches = names.filter((name) => /^main-[A-Za-z0-9_-]+\.js$/u.test(name));
+export function applyLinuxDesktopIdentityPatch(source) {
+  if (source.includes(IDENTITY_MARKER)) return source;
+  if (!source.includes(APP_NAME_SETUP)) {
+    throw new Error("unsupported desktop identity source");
+  }
+  return `${IDENTITY_MARKER}${source.replace(APP_NAME_SETUP, LINUX_APP_NAME_SETUP)}`;
+}
+
+function selectBundle(names, prefix) {
+  const matches = names.filter((name) => new RegExp(`^${prefix}-[A-Za-z0-9_-]+\\.js$`, "u").test(name));
   if (matches.length !== 1) {
-    throw new Error(`expected exactly one main bundle, found ${matches.length}`);
+    throw new Error(`expected exactly one ${prefix} bundle, found ${matches.length}`);
   }
   return matches[0];
+}
+
+export function selectMainBundle(names) {
+  return selectBundle(names, "main");
+}
+
+export function selectBootstrapBundle(names) {
+  return selectBundle(names, "bootstrap");
 }

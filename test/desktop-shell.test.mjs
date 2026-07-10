@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  applyLinuxDesktopIdentityPatch,
   applyLinuxDesktopShellPatch,
+  selectBootstrapBundle,
   selectMainBundle,
 } from "../src/patches/desktop-shell.mjs";
 
@@ -13,6 +15,9 @@ const fixture = [
   "async function ore(e){return process.platform!==`win32`&&process.platform!==`darwin`?null:(W9=!0,e)}",
   "};j&&we();let Ee=er(",
 ].join(";");
+
+const bootstrapFixture =
+  "a.app.setName(t.Na(Z,Q)),a.app.setPath(`userData`,ee({appDataPath:a.app.getPath(`appData`)}))";
 
 test("Linux desktop shell reuses upstream tray and renders an opaque title overlay", () => {
   const patched = applyLinuxDesktopShellPatch(fixture);
@@ -43,4 +48,25 @@ test("main bundle selection fails closed", () => {
     () => selectMainBundle(["main-a.js", "main-b.js"]),
     /exactly one main bundle/,
   );
+});
+
+test("Linux bootstrap declares the packaged desktop identity", () => {
+  const patched = applyLinuxDesktopIdentityPatch(bootstrapFixture);
+  assert.match(
+    patched,
+    /process\.platform===`linux`&&a\.app\.setDesktopName\(`chatgpt-desktop\.desktop`\)/,
+  );
+  assert.equal(applyLinuxDesktopIdentityPatch(patched), patched);
+  assert.throws(
+    () => applyLinuxDesktopIdentityPatch("upstream drift"),
+    /unsupported desktop identity source/,
+  );
+});
+
+test("bootstrap bundle selection fails closed", () => {
+  assert.equal(
+    selectBootstrapBundle(["bootstrap-abc.js", "main-def.js"]),
+    "bootstrap-abc.js",
+  );
+  assert.throws(() => selectBootstrapBundle(["main-def.js"]), /exactly one bootstrap bundle/);
 });

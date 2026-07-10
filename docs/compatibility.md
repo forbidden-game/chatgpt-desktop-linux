@@ -10,6 +10,7 @@ entry is not treated as proof that its Linux backend works.
 - native Wayland, GPU render-node ownership, and Electron renderer sandbox.
 - opaque Linux title-bar controls that follow the system light/dark theme.
 - KDE StatusNotifier tray registration, close-to-tray, and tray activation.
+- KDE taskbar identity mapped to the packaged ChatGPT desktop file and icon.
 - Codex CLI `0.144.0` app-server handshake.
 - Chat, Codex, Plugins, Sites, project list, and composer rendering.
 - Fcitx 5 is attached under the Wayland session.

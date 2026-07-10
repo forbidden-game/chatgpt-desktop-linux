@@ -27,6 +27,7 @@ test("Debian control is manual-update and Ubuntu focused", () => {
 test("desktop entry launches the package without claiming codex URLs", () => {
   const entry = desktopEntry();
   assert.match(entry, /^Exec=chatgpt-desktop %U$/mu);
+  assert.match(entry, /^Icon=chatgpt-desktop$/mu);
   assert.match(entry, /^StartupWMClass=chatgpt-desktop$/mu);
   assert.match(entry, /^Categories=Utility;$/mu);
   assert.doesNotMatch(entry, /MimeType|codex:\/\//u);
