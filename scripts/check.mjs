@@ -7,6 +7,7 @@ const requiredFiles = [
   ".gitignore",
   "AGENTS.md",
   "build.sh",
+  "download.sh",
   "README.md",
   "NOTICE.md",
   "native/package-lock.json",

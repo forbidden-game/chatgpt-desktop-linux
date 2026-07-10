@@ -51,17 +51,14 @@ for the complete tested surface and explicit limitations.
 
 ## Install
 
-### 1. Get the source and an official DMG
+### 1. Get the source
 
-Clone this repository and place your legitimately obtained official
-`ChatGPT.dmg` somewhere on the same machine:
+Clone this repository:
 
 ```bash
 git clone https://github.com/forbidden-game/chatgpt-desktop-linux.git
 cd chatgpt-desktop-linux
 ```
-
-The DMG is an input to your local build. Do not add it to the repository.
 
 ### 2. Install build dependencies
 
@@ -69,7 +66,7 @@ Node.js 22 or newer is required to build:
 
 ```bash
 sudo apt update
-sudo apt install build-essential 7zip unzip nodejs npm python3 dpkg-dev
+sudo apt install build-essential 7zip unzip nodejs npm python3 dpkg-dev curl
 node --version
 ./build.sh --check
 ```
@@ -91,7 +88,27 @@ but is not claimed as verified until it passes the app-server handshake. If the
 executable lives elsewhere, launch with
 `CHATGPT_CODEX_CLI_PATH=/path/to/codex`.
 
-### 3. Build the Debian package
+### 3. Download the official DMG
+
+`download.sh` fetches the current official Electron-based ChatGPT DMG from
+OpenAI's [`codex-app-prod` channel](https://persistent.oaistatic.com/codex-app-prod/ChatGPT.dmg)
+and saves it to `$HOME/Downloads/ChatGPT.dmg`:
+
+```bash
+./download.sh
+```
+
+It refuses to overwrite an existing file. Pass another destination when you
+want to preserve an older download:
+
+```bash
+./download.sh "$HOME/Downloads/ChatGPT-latest.dmg"
+```
+
+The DMG remains a local input to the build and is ignored by Git; it is not
+committed to or redistributed by this repository.
+
+### 4. Build the Debian package
 
 ```bash
 ./build.sh "$HOME/Downloads/ChatGPT.dmg"
@@ -109,7 +126,7 @@ The builder:
 A newer ChatGPT DMG is accepted only when its Electron version, native modules,
 archive structure, and patch points still satisfy these checks.
 
-### 4. Install and launch
+### 5. Install and launch
 
 ```bash
 sudo apt install ./dist/chatgpt-desktop_*_amd64.deb
