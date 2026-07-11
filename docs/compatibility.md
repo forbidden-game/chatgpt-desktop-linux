@@ -5,7 +5,7 @@ entry is not treated as proof that its Linux backend works.
 
 ## Build verified
 
-- ChatGPT `26.707.31428` with Electron `42.1.0`.
+- ChatGPT `26.707.41301` with Electron `42.1.0`.
 - complete assembly with all three fail-closed Linux patches applied.
 - deterministic Debian packaging and package-content smoke checks.
 

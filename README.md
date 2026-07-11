@@ -35,7 +35,7 @@ committed to or redistributed by this repository.
 | Area | Current status |
 | --- | --- |
 | Distribution | Kubuntu x86_64 verified; Ubuntu/Kubuntu x86_64 is the v1 target |
-| Upstream app | ChatGPT `26.707.31428`, Electron `42.1.0`; build and Debian package verified |
+| Upstream app | ChatGPT `26.707.41301`, Electron `42.1.0`; build and Debian package verified |
 | Display | Native Wayland + GPU verified; explicit X11 fallback available |
 | Desktop shell | KDE tray, close-to-tray, taskbar identity, icon, and themed title controls verified |
 | Input | Fcitx 5 Chinese input verified under Wayland |
@@ -45,7 +45,7 @@ committed to or redistributed by this repository.
 | Updates | Manual rebuild and package installation |
 
 The runtime and CPU measurements were last repeated with ChatGPT
-`26.707.30751`; the current `26.707.31428` baseline has passed the complete
+`26.707.30751`; the current `26.707.41301` baseline has passed the complete
 build and package smoke checks. See [compatibility status](docs/compatibility.md)
 for the complete tested surface and explicit limitations.
 
