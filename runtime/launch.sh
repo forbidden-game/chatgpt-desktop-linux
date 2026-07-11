@@ -116,6 +116,10 @@ command -v flock >/dev/null || {
   echo "flock is required to coordinate ChatGPT instances" >&2
   exit 1
 }
+command -v setsid >/dev/null || {
+  echo "setsid is required to isolate the ChatGPT process group" >&2
+  exit 1
+}
 [[ -f "$app_dir/.chatgpt-linux/webview_server.py" ]] || {
   echo "Missing ChatGPT webview server" >&2
   exit 1
@@ -139,16 +143,16 @@ webview_pid=$!
 
 # shellcheck disable=SC2329 # Invoked by EXIT and signal handlers.
 cleanup() {
-  if [[ -n "$electron_pid" ]] && kill -0 "$electron_pid" 2>/dev/null; then
-    kill "$electron_pid" 2>/dev/null || true
+  if [[ -n "$electron_pid" ]] && kill -0 -- "-$electron_pid" 2>/dev/null; then
+    kill -TERM -- "-$electron_pid" 2>/dev/null || true
     for _ in {1..20}; do
-      kill -0 "$electron_pid" 2>/dev/null || break
+      kill -0 -- "-$electron_pid" 2>/dev/null || break
       sleep 0.1
     done
-    kill -KILL "$electron_pid" 2>/dev/null || true
-    wait "$electron_pid" 2>/dev/null || true
-    electron_pid=""
+    kill -KILL -- "-$electron_pid" 2>/dev/null || true
   fi
+  [[ -z "$electron_pid" ]] || wait "$electron_pid" 2>/dev/null || true
+  electron_pid=""
   kill "$webview_pid" 2>/dev/null || true
   wait "$webview_pid" 2>/dev/null || true
 }
@@ -180,11 +184,10 @@ if [[ "$webview_ready" != 1 ]]; then
 fi
 
 cd "$app_dir"
-"$app_dir/chatgpt-desktop" "${electron_args[@]}" &
+setsid "$app_dir/chatgpt-desktop" "${electron_args[@]}" &
 electron_pid=$!
 set +e
 wait "$electron_pid"
 status=$?
 set -e
-electron_pid=""
 exit "$status"
