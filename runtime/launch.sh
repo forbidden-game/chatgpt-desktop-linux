@@ -4,6 +4,10 @@ set -Eeuo pipefail
 app_dir="${CHATGPT_APP_DIR:-$(cd "$(dirname "$0")" && pwd)}"
 app_id="${CHATGPT_APP_ID:-chatgpt-desktop}"
 state_dir="${CHATGPT_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/$app_id/profile-v1}"
+host_config_home="${CHATGPT_HOST_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}}"
+if [[ "$host_config_home" == "$state_dir/xdg-config" ]]; then
+  host_config_home="$HOME/.config"
+fi
 webview_port="${CHATGPT_WEBVIEW_PORT:-5186}"
 display_backend="${CHATGPT_DISPLAY_BACKEND:-wayland}"
 electron_args=()
@@ -52,9 +56,12 @@ export CODEX_ELECTRON_BUNDLED_PLUGINS_RESOURCES_PATH="$app_dir/resources/plugins
 export CODEX_LINUX_APP_ID="$app_id"
 export CODEX_LINUX_APP_DISPLAY_NAME=ChatGPT
 export CODEX_LINUX_APP_STATE_DIR="$state_dir"
+export CODEX_NODE_REPL_PATH="${CHATGPT_NODE_REPL_PATH:-$app_dir/resources/node_repl}"
 export CODEX_SHELL=1
 export ELECTRON_RENDERER_URL="http://127.0.0.1:$webview_port/"
-export XDG_CONFIG_HOME="$state_dir/xdg-config"
+# Electron and Codex have explicit profile directories. Keep the host XDG
+# directory so external applications inherit the user's real configuration.
+export XDG_CONFIG_HOME="$host_config_home"
 
 CODEX_BROWSER_USE_NODE_PATH="${CHATGPT_NODE_PATH:-}"
 if [[ -z "$CODEX_BROWSER_USE_NODE_PATH" ]]; then
@@ -80,6 +87,7 @@ if [[ "${CHATGPT_DRY_RUN:-0}" == 1 ]]; then
     "CODEX_CLI_PATH=$CODEX_CLI_PATH" \
     "CODEX_BROWSER_USE_NODE_PATH=$CODEX_BROWSER_USE_NODE_PATH" \
     "CODEX_HOME=$CODEX_HOME" \
+    "CODEX_NODE_REPL_PATH=$CODEX_NODE_REPL_PATH" \
     "ELECTRON_RENDERER_URL=$ELECTRON_RENDERER_URL" \
     "XDG_CONFIG_HOME=$XDG_CONFIG_HOME"
   printf 'COMMAND=%q' "$app_dir/chatgpt-desktop"

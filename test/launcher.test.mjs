@@ -7,7 +7,7 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 const launcher = new URL("../runtime/launch.sh", import.meta.url);
 
-async function dryRun(args = []) {
+async function dryRun(args = [], env = {}) {
   const { stdout } = await execFileAsync("bash", [launcher.pathname, ...args], {
     env: {
       ...process.env,
@@ -19,6 +19,9 @@ async function dryRun(args = []) {
       CODEX_CLI_PATH: "/opt/codex-desktop/resources/codex",
       CODEX_HOME: "/opt/codex-desktop/home",
       HOME: "/tmp/chatgpt-home",
+      XDG_CONFIG_DIRS: "/tmp/system-config",
+      XDG_CONFIG_HOME: "/tmp/chatgpt-host-config",
+      ...env,
     },
   });
   return stdout;
@@ -27,16 +30,24 @@ async function dryRun(args = []) {
 test("launcher defaults to native Wayland with an isolated profile", async () => {
   const output = await dryRun();
   assert.match(output, /ELECTRON_RENDERER_URL=http:\/\/127\.0\.0\.1:5186\//);
-  assert.match(output, /XDG_CONFIG_HOME=\/tmp\/chatgpt-home\/\.local\/state\/chatgpt-desktop-v2\/profile-v1\/xdg-config/);
+  assert.match(output, /XDG_CONFIG_HOME=\/tmp\/chatgpt-host-config/);
   assert.match(output, /--user-data-dir=\/tmp\/chatgpt-home\/\.local\/state\/chatgpt-desktop-v2\/profile-v1\/electron-user-data/);
   assert.match(output, /--ozone-platform=wayland/);
   assert.match(output, /--enable-features=WaylandWindowDecorations/);
   assert.match(output, /CODEX_BROWSER_USE_NODE_PATH=\/usr\/bin\/node/);
   assert.match(output, /CODEX_CLI_PATH=\/bin\/true/);
   assert.match(output, /CODEX_HOME=\/tmp\/chatgpt-home\/\.codex/);
+  assert.match(output, /CODEX_NODE_REPL_PATH=\/tmp\/chatgpt-app\/resources\/node_repl/);
   assert.doesNotMatch(output, /--disable-gpu|--no-sandbox/);
   assert.doesNotMatch(output, /\/opt\/(?:codex|chatgpt)-desktop/);
   assert.match(output, /COMMAND=\/tmp\/chatgpt-app\/chatgpt-desktop/);
+});
+
+test("launcher does not pass its old isolated XDG directory to external apps", async () => {
+  const output = await dryRun([], {
+    XDG_CONFIG_HOME: "/tmp/chatgpt-home/.local/state/chatgpt-desktop-v2/profile-v1/xdg-config",
+  });
+  assert.match(output, /XDG_CONFIG_HOME=\/tmp\/chatgpt-home\/\.config/);
 });
 
 test("launcher exposes an explicit X11 fallback", async () => {

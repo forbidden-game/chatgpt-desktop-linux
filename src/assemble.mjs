@@ -14,6 +14,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { run } from "./command.mjs";
+import { installBrowserRuntime } from "./browser-runtime.mjs";
 import { ensureElectronArchive } from "./electron-runtime.mjs";
 import { patchBetterSqlite3Directory } from "./native-modules.mjs";
 import { applyPatches } from "./patches/index.mjs";
@@ -194,6 +195,9 @@ export async function assembleApp(inputPath, options = {}) {
     join(targetResources, "codex-notification.wav"),
   );
   await copyFile(join(sourceResources, "icon-chatgpt.png"), join(targetResources, "icon-chatgpt.png"));
+  const browserRuntime = await installBrowserRuntime(targetResources, workDir, {
+    source: options.browserRuntimeArchive ?? process.env.CHATGPT_BROWSER_RUNTIME_ARCHIVE,
+  });
   await copyFile(join(repoRoot, "runtime", "launch.sh"), join(appDir, "start.sh"));
   await chmod(join(appDir, "start.sh"), 0o755);
   const runtimeDir = join(appDir, ".chatgpt-linux");
@@ -232,6 +236,7 @@ export async function assembleApp(inputPath, options = {}) {
       sha256: electron.sha256,
     },
     nativeModules,
+    browserRuntime,
     patches,
     pluginCompatibility,
     source: metadata.source,

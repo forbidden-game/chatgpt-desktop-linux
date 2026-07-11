@@ -8,7 +8,7 @@ if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
 fi
 
 missing=()
-for command in node npm python3 unzip dpkg-deb make g++; do
+for command in node npm python3 unzip dpkg-deb make g++ tar; do
   command -v "$command" >/dev/null || missing+=("$command")
 done
 if ! command -v 7zz >/dev/null && ! command -v 7z >/dev/null; then

@@ -7,6 +7,7 @@ import {
   selectBootstrapBundle,
   selectMainBundle,
 } from "./desktop-shell.mjs";
+import { applyLinuxChromeExtensionPatch } from "./chrome-extension.mjs";
 import { applyGitWatcherPatch } from "./git-watcher.mjs";
 
 export async function applyPatches(asarDir) {
@@ -18,7 +19,8 @@ export async function applyPatches(asarDir) {
   const buildDir = join(asarDir, ".vite", "build");
   const main = join(buildDir, selectMainBundle(await readdir(buildDir)));
   const mainSource = await readFile(main, "utf8");
-  const patchedMain = applyLinuxDesktopShellPatch(mainSource);
+  const chromePatchedMain = applyLinuxChromeExtensionPatch(mainSource);
+  const patchedMain = applyLinuxDesktopShellPatch(chromePatchedMain);
   await writeFile(main, patchedMain);
 
   const bootstrap = join(buildDir, selectBootstrapBundle(await readdir(buildDir)));
@@ -30,8 +32,11 @@ export async function applyPatches(asarDir) {
     id: "valid-git-marker",
     status: patched === source ? "already-applied" : "applied",
   }, {
+    id: "linux-chrome-extension",
+    status: chromePatchedMain === mainSource ? "already-applied" : "applied",
+  }, {
     id: "linux-desktop-shell",
-    status: patchedMain === mainSource ? "already-applied" : "applied",
+    status: patchedMain === chromePatchedMain ? "already-applied" : "applied",
   }, {
     id: "linux-desktop-identity",
     status: patchedBootstrap === bootstrapSource ? "already-applied" : "applied",
