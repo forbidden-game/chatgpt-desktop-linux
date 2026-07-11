@@ -8,6 +8,7 @@ const requiredFiles = [
   "AGENTS.md",
   "build.sh",
   "download.sh",
+  "install.sh",
   "README.md",
   "NOTICE.md",
   "native/package-lock.json",

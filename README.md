@@ -88,6 +88,21 @@ but is not claimed as verified until it passes the app-server handshake. If the
 executable lives elsewhere, launch with
 `CHATGPT_CODEX_CLI_PATH=/path/to/codex`.
 
+### One-command download, build, and install
+
+After the dependencies above are installed, run:
+
+```bash
+./install.sh
+```
+
+The script downloads the latest official Electron DMG into a temporary
+directory, runs the fail-closed build, and installs the Debian package produced
+by that build. It does not stop or restart an already running ChatGPT process;
+restart the app yourself when convenient.
+
+The remaining steps show the equivalent manual workflow.
+
 ### 3. Download the official DMG
 
 `download.sh` fetches the current official Electron-based ChatGPT DMG from
