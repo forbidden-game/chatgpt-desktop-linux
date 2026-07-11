@@ -60,13 +60,48 @@ git clone https://github.com/forbidden-game/chatgpt-desktop-linux.git
 cd chatgpt-desktop-linux
 ```
 
-### 2. Install build dependencies
+### 2. One-command install
+
+Run:
+
+```bash
+./install.sh
+```
+
+Run the script as your normal desktop user, not with `sudo`; it requests
+administrator access only for APT operations.
+
+The installer reports each of its eight steps and identifies the failed step
+when a command exits unsuccessfully. It:
+
+1. checks for a supported Debian/Ubuntu x86_64 system and validates `sudo`
+   access up front;
+2. refreshes APT metadata;
+3. installs all system build and runtime dependencies;
+4. verifies that APT supplies the app's Node.js 18 runtime dependency, then
+   uses the system Node.js for building when it is version 22 or newer;
+   otherwise it downloads and SHA-256 verifies the latest Node.js 22 Linux x64
+   archive under `$HOME/.local/share/chatgpt-desktop-linux`;
+5. uses an existing Codex CLI or installs the official npm package under the
+   same user-local directory, then ensures the launcher can find it without
+   overwriting a user-managed executable or symbolic link;
+6. downloads the latest official Electron DMG into a temporary directory;
+7. runs the fail-closed build; and
+8. installs the one Debian package produced by that build.
+
+It does not stop or restart an already running ChatGPT process; restart the app
+yourself when convenient. A long download or build may outlive the system's
+`sudo` credential timeout and prompt again during final package installation.
+The remaining steps show the equivalent manual workflow.
+
+### 3. Install build dependencies manually
 
 Node.js 22 or newer is required to build:
 
 ```bash
 sudo apt update
-sudo apt install build-essential 7zip unzip nodejs npm python3 dpkg-dev curl
+sudo apt install build-essential 7zip unzip nodejs npm python3 dpkg-dev curl \
+  ca-certificates xz-utils tar git util-linux xdg-utils
 node --version
 ./build.sh --check
 ```
@@ -88,22 +123,7 @@ but is not claimed as verified until it passes the app-server handshake. If the
 executable lives elsewhere, launch with
 `CHATGPT_CODEX_CLI_PATH=/path/to/codex`.
 
-### One-command download, build, and install
-
-After the dependencies above are installed, run:
-
-```bash
-./install.sh
-```
-
-The script downloads the latest official Electron DMG into a temporary
-directory, runs the fail-closed build, and installs the Debian package produced
-by that build. It does not stop or restart an already running ChatGPT process;
-restart the app yourself when convenient.
-
-The remaining steps show the equivalent manual workflow.
-
-### 3. Download the official DMG
+### 4. Download the official DMG manually
 
 `download.sh` fetches the current official Electron-based ChatGPT DMG from
 OpenAI's [`codex-app-prod` channel](https://persistent.oaistatic.com/codex-app-prod/ChatGPT.dmg)
@@ -123,7 +143,7 @@ want to preserve an older download:
 The DMG remains a local input to the build and is ignored by Git; it is not
 committed to or redistributed by this repository.
 
-### 4. Build the Debian package
+### 5. Build the Debian package manually
 
 ```bash
 ./build.sh "$HOME/Downloads/ChatGPT.dmg"
@@ -141,7 +161,7 @@ The builder:
 A newer ChatGPT DMG is accepted only when its Electron version, native modules,
 archive structure, and patch points still satisfy these checks.
 
-### 5. Install and launch
+### 6. Install and launch manually
 
 ```bash
 sudo apt install ./dist/chatgpt-desktop_*_amd64.deb
