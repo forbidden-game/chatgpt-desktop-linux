@@ -17,6 +17,7 @@ const fixture = [
   "async handleMessage(e){switch(e.type){case`tray-menu-threads-changed`:this.trayMenuThreads=e.trayMenuThreads;return}}",
   "function v6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);return(Array.isArray(t)?t:t.items)[0]?.label??`Quit ${e}`}",
   "};j&&we();let Ee=er(",
+  "for(let e of a){let t=c.nativeImage.createFromPath(e);if(!t.isEmpty())return t}return null}function q9(e){return e}",
 ].join(";");
 
 const bootstrapFixture =
@@ -28,7 +29,7 @@ test("Linux desktop shell reuses upstream tray and renders an opaque title overl
   assert.match(patched, /process\.platform!==`linux`\?null/);
   assert.match(patched, /\(j\|\|process\.platform===`linux`\)&&we\(\)/);
   assert.match(patched, /process\.platform===`win32`\|\|process\.platform===`linux`/);
-  assert.match(patched, /icon-chatgpt\.png/);
+  assert.match(patched, /chatgptTemplate\.png/);
   assert.match(
     patched,
     /color:process\.platform===`linux`\?\(c\.nativeTheme\.shouldUseDarkColors\?`#1f1f1f`:`#f9f9f9`\):k9/,
@@ -44,6 +45,10 @@ test("Linux desktop shell reuses upstream tray and renders an opaque title overl
   assert.match(
     patched,
     /process\.platform===`linux`\?require\(`electron`\)\.Menu:c\.Menu/,
+  );
+  assert.match(
+    patched,
+    /process\.platform===`linux`&&\(e\.width>64\|\|e\.height>64\)\?t\.resize\(\{width:64,height:64,quality:`best`\}\):t/,
   );
 });
 

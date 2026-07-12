@@ -3,11 +3,12 @@ const IDENTITY_MARKER = "/* chatgpt-linux: linux-desktop-identity */";
 const APP_NAME_SETUP = "a.app.setName(t.Na(Z,Q)),a.app.setPath(";
 const LINUX_APP_NAME_SETUP =
   "a.app.setName(t.Na(Z,Q)),process.platform===`linux`&&a.app.setDesktopName(`chatgpt-desktop.desktop`),a.app.setPath(";
+const LINUX_TRAY_ICON_SIZE = 64;
 
 const REPLACEMENTS = [
   [
     "case n.Vc.ChatGPT:return{dark:`chatgpt-tray-dark.ico`,light:`chatgpt-tray-light.ico`}",
-    "case n.Vc.ChatGPT:return process.platform===`linux`?{dark:`icon-chatgpt.png`,light:`icon-chatgpt.png`}:{dark:`chatgpt-tray-dark.ico`,light:`chatgpt-tray-light.ico`}",
+    "case n.Vc.ChatGPT:return process.platform===`linux`?{dark:`chatgptTemplate.png`,light:`chatgptTemplate.png`}:{dark:`chatgpt-tray-dark.ico`,light:`chatgpt-tray-light.ico`}",
   ],
   [
     "if(process.platform===`win32`&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){",
@@ -28,6 +29,10 @@ const REPLACEMENTS = [
   [
     "};j&&we();let Ee=er(",
     "};(j||process.platform===`linux`)&&we();let Ee=er(",
+  ],
+  [
+    "for(let e of a){let t=c.nativeImage.createFromPath(e);if(!t.isEmpty())return t}return null}function q9",
+    `for(let e of a){let t=c.nativeImage.createFromPath(e);if(!t.isEmpty()){let e=t.getSize();return process.platform===\`linux\`&&(e.width>${LINUX_TRAY_ICON_SIZE}||e.height>${LINUX_TRAY_ICON_SIZE})?t.resize({width:${LINUX_TRAY_ICON_SIZE},height:${LINUX_TRAY_ICON_SIZE},quality:\`best\`}):t}}return null}function q9`,
   ],
 ];
 

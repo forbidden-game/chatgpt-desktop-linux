@@ -42,6 +42,8 @@ test("selectedResourceMembers keeps upstream product resources but not macOS run
     "ChatGPT Installer/ChatGPT.app/Contents/Resources/app.asar.unpacked/*",
     "ChatGPT Installer/ChatGPT.app/Contents/Resources/plugins/*",
     "ChatGPT Installer/ChatGPT.app/Contents/Resources/skills/*",
+    "ChatGPT Installer/ChatGPT.app/Contents/Resources/chatgptTemplate.png",
+    "ChatGPT Installer/ChatGPT.app/Contents/Resources/chatgptTemplate@2x.png",
     "ChatGPT Installer/ChatGPT.app/Contents/Resources/icon-chatgpt.png",
     "ChatGPT Installer/ChatGPT.app/Contents/Resources/codex-notification.wav",
   ]);

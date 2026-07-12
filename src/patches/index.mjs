@@ -9,6 +9,7 @@ import {
 } from "./desktop-shell.mjs";
 import { applyLinuxChromeExtensionPatch } from "./chrome-extension.mjs";
 import { applyGitWatcherPatch } from "./git-watcher.mjs";
+import { applyOptInMemoryProbePatch } from "./memory-probe.mjs";
 
 export async function applyPatches(asarDir) {
   const worker = join(asarDir, ".vite", "build", "worker.js");
@@ -20,7 +21,8 @@ export async function applyPatches(asarDir) {
   const main = join(buildDir, selectMainBundle(await readdir(buildDir)));
   const mainSource = await readFile(main, "utf8");
   const chromePatchedMain = applyLinuxChromeExtensionPatch(mainSource);
-  const patchedMain = applyLinuxDesktopShellPatch(chromePatchedMain);
+  const desktopPatchedMain = applyLinuxDesktopShellPatch(chromePatchedMain);
+  const patchedMain = applyOptInMemoryProbePatch(desktopPatchedMain);
   await writeFile(main, patchedMain);
 
   const bootstrap = join(buildDir, selectBootstrapBundle(await readdir(buildDir)));
@@ -36,7 +38,10 @@ export async function applyPatches(asarDir) {
     status: chromePatchedMain === mainSource ? "already-applied" : "applied",
   }, {
     id: "linux-desktop-shell",
-    status: patchedMain === chromePatchedMain ? "already-applied" : "applied",
+    status: desktopPatchedMain === chromePatchedMain ? "already-applied" : "applied",
+  }, {
+    id: "opt-in-memory-probe",
+    status: patchedMain === desktopPatchedMain ? "already-applied" : "applied",
   }, {
     id: "linux-desktop-identity",
     status: patchedBootstrap === bootstrapSource ? "already-applied" : "applied",

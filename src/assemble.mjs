@@ -30,6 +30,8 @@ export function selectedResourceMembers(appRoot) {
     `${resources}/app.asar.unpacked/*`,
     `${resources}/plugins/*`,
     `${resources}/skills/*`,
+    `${resources}/chatgptTemplate.png`,
+    `${resources}/chatgptTemplate@2x.png`,
     `${resources}/icon-chatgpt.png`,
     `${resources}/codex-notification.wav`,
   ];
@@ -193,6 +195,14 @@ export async function assembleApp(inputPath, options = {}) {
   await copyIfPresent(
     join(sourceResources, "codex-notification.wav"),
     join(targetResources, "codex-notification.wav"),
+  );
+  await copyFile(
+    join(sourceResources, "chatgptTemplate.png"),
+    join(targetResources, "chatgptTemplate.png"),
+  );
+  await copyFile(
+    join(sourceResources, "chatgptTemplate@2x.png"),
+    join(targetResources, "chatgptTemplate@2x.png"),
   );
   await copyFile(join(sourceResources, "icon-chatgpt.png"), join(targetResources, "icon-chatgpt.png"));
   const browserRuntime = await installBrowserRuntime(targetResources, workDir, {
