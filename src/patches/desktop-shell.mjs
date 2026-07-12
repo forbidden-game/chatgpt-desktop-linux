@@ -10,10 +10,6 @@ const REPLACEMENTS = [
     "case n.Vc.ChatGPT:return process.platform===`linux`?{dark:`icon-chatgpt.png`,light:`icon-chatgpt.png`}:{dark:`chatgpt-tray-dark.ico`,light:`chatgpt-tray-light.ico`}",
   ],
   [
-    "color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?One:Dne",
-    "color:process.platform===`linux`?(c.nativeTheme.shouldUseDarkColors?`#1f1f1f`:`#f9f9f9`):k9,symbolColor:c.nativeTheme.shouldUseDarkColors?One:Dne",
-  ],
-  [
     "if(process.platform===`win32`&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){",
     "if((process.platform===`win32`||process.platform===`linux`)&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){",
   ],
@@ -30,12 +26,31 @@ const REPLACEMENTS = [
     "this.trayMenuThreads=e.trayMenuThreads,process.platform===`linux`&&this.tray.setContextMenu(require(`electron`).Menu.buildFromTemplate(this.getNativeTrayMenuItems()));return",
   ],
   [
-    "function v6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);",
-    "function v6(e){let t=(process.platform===`linux`?require(`electron`).Menu:c.Menu).buildFromTemplate([{role:`quit`}]);",
-  ],
-  [
     "};j&&we();let Ee=er(",
     "};(j||process.platform===`linux`)&&we();let Ee=er(",
+  ],
+];
+
+const REPLACEMENT_VARIANTS = [
+  [
+    [
+      "color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?One:Dne",
+      "color:process.platform===`linux`?(c.nativeTheme.shouldUseDarkColors?`#1f1f1f`:`#f9f9f9`):k9,symbolColor:c.nativeTheme.shouldUseDarkColors?One:Dne",
+    ],
+    [
+      "color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Ane:kne",
+      "color:process.platform===`linux`?(c.nativeTheme.shouldUseDarkColors?`#1f1f1f`:`#f9f9f9`):k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Ane:kne",
+    ],
+  ],
+  [
+    [
+      "function v6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);",
+      "function v6(e){let t=(process.platform===`linux`?require(`electron`).Menu:c.Menu).buildFromTemplate([{role:`quit`}]);",
+    ],
+    [
+      "function b6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);",
+      "function b6(e){let t=(process.platform===`linux`?require(`electron`).Menu:c.Menu).buildFromTemplate([{role:`quit`}]);",
+    ],
   ],
 ];
 
@@ -47,12 +62,19 @@ function replaceExactlyOnce(source, original, replacement) {
   return source.replace(original, replacement);
 }
 
+function replaceExactlyOneVariant(source, variants) {
+  const matching = variants.filter(([original]) => source.includes(original));
+  if (matching.length !== 1) throw new Error("unsupported desktop shell source");
+  return replaceExactlyOnce(source, ...matching[0]);
+}
+
 export function applyLinuxDesktopShellPatch(source) {
   if (source.includes(MARKER)) return source;
-  const patched = REPLACEMENTS.reduce(
+  const commonPatched = REPLACEMENTS.reduce(
     (current, [original, replacement]) => replaceExactlyOnce(current, original, replacement),
     source,
   );
+  const patched = REPLACEMENT_VARIANTS.reduce(replaceExactlyOneVariant, commonPatched);
   return `${MARKER}${patched}`;
 }
 

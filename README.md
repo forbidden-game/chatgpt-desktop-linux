@@ -1,5 +1,7 @@
 # ChatGPT Desktop for Linux
 
+Latest supported ChatGPT app: **July 12, 2026** (`26.707.51957`).
+
 Unofficial, source-only builder for running the official Electron-based ChatGPT
 desktop app on Ubuntu and Kubuntu x86_64.
 
@@ -36,7 +38,7 @@ The installer:
 | Area | Verified status |
 | --- | --- |
 | Target | Ubuntu/Kubuntu x86_64 |
-| Upstream | ChatGPT `26.707.41301`, Electron `42.1.0` |
+| Upstream | ChatGPT `26.707.51957`, Electron `42.1.0` |
 | Display | Native Wayland + GPU; explicit X11 fallback |
 | Desktop | KDE tray, close-to-tray, taskbar identity, icon, Fcitx 5 |
 

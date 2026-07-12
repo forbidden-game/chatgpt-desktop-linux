@@ -11,16 +11,16 @@ const infoPlist = `<?xml version="1.0" encoding="UTF-8"?>
 <plist version="1.0"><dict>
   <key>CFBundleExecutable</key><string>ChatGPT</string>
   <key>CFBundleIdentifier</key><string>com.openai.codex</string>
-  <key>CFBundleShortVersionString</key><string>26.707.41301</string>
-  <key>CFBundleVersion</key><string>5103</string>
+  <key>CFBundleShortVersionString</key><string>26.707.51957</string>
+  <key>CFBundleVersion</key><string>5175</string>
 </dict></plist>`;
 
 test("parseInfoPlist reads immutable upstream identity", () => {
   assert.deepEqual(parseInfoPlist(infoPlist), {
-    build: "5103",
+    build: "5175",
     bundleId: "com.openai.codex",
     executable: "ChatGPT",
-    version: "26.707.41301",
+    version: "26.707.51957",
   });
 });
 
@@ -67,17 +67,17 @@ test("inspectAppMetadata joins plist and ASAR package facts", () => {
     devDependencies: { electron: "42.1.0" },
     main: ".vite/build/early-bootstrap.js",
     name: "openai-codex-electron",
-    version: "26.707.41301",
+    version: "26.707.51957",
   };
 
   assert.deepEqual(inspectAppMetadata(infoPlist, packageJson), {
     app: {
-      build: "5103",
+      build: "5175",
       bundleId: "com.openai.codex",
       executable: "ChatGPT",
       main: ".vite/build/early-bootstrap.js",
       name: "openai-codex-electron",
-      version: "26.707.41301",
+      version: "26.707.51957",
     },
     electron: { version: "42.1.0" },
     nativeModules: {
