@@ -24,6 +24,11 @@ Keep the public interface small and the implementation readable.
 
 ## Validation
 
+- Turn every encountered problem into an evaluable test case that reproduces
+  the failure and prevents its regression.
 - Run `npm test` while changing JavaScript.
 - Run `npm run check` before committing.
 - Build with a user-supplied DMG and run package smoke checks before release.
+- After packaging every new version, run the complete test suite. If any
+  regression is found, fix it and extend the suite with a test case that covers
+  the regression before release.
