@@ -5,11 +5,16 @@ entry is not treated as proof that its Linux backend works.
 
 ## Build verified
 
-- ChatGPT `26.707.51957` with Electron `42.1.0`.
-- complete assembly with all three fail-closed Linux patches applied.
+- ChatGPT `26.707.61608` with Electron `42.1.0`.
+- complete assembly with all five fail-closed Linux patches applied.
 - deterministic Debian packaging and package-content smoke checks.
 
 ## Runtime verified on Kubuntu
+
+An isolated packaged-runtime smoke test was repeated with ChatGPT
+`26.707.61608` and Electron `42.1.0`. It verified native Wayland startup, GPU
+render-node ownership, the Electron renderer sandbox, local webview health, and
+the Codex CLI `0.144.1` app-server handshake.
 
 The complete interactive runtime checks below were last repeated with ChatGPT
 `26.707.30751` and Electron `42.1.0`:
