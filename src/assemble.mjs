@@ -37,6 +37,11 @@ export function selectedResourceMembers(appRoot) {
   ];
 }
 
+export async function copyReadableFile(source, destination) {
+  await copyFile(source, destination);
+  await chmod(destination, 0o644);
+}
+
 export function nativeBuildManifest(versions) {
   for (const name of ["better-sqlite3", "node-pty"]) {
     if (!/^\d+\.\d+\.\d+$/u.test(versions[name] ?? "")) {
@@ -196,15 +201,18 @@ export async function assembleApp(inputPath, options = {}) {
     join(sourceResources, "codex-notification.wav"),
     join(targetResources, "codex-notification.wav"),
   );
-  await copyFile(
+  await copyReadableFile(
     join(sourceResources, "chatgptTemplate.png"),
     join(targetResources, "chatgptTemplate.png"),
   );
-  await copyFile(
+  await copyReadableFile(
     join(sourceResources, "chatgptTemplate@2x.png"),
     join(targetResources, "chatgptTemplate@2x.png"),
   );
-  await copyFile(join(sourceResources, "icon-chatgpt.png"), join(targetResources, "icon-chatgpt.png"));
+  await copyReadableFile(
+    join(sourceResources, "icon-chatgpt.png"),
+    join(targetResources, "icon-chatgpt.png"),
+  );
   const browserRuntime = await installBrowserRuntime(targetResources, workDir, {
     source: options.browserRuntimeArchive ?? process.env.CHATGPT_BROWSER_RUNTIME_ARCHIVE,
   });

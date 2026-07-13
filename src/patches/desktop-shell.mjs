@@ -4,6 +4,7 @@ const APP_NAME_SETUP = "a.app.setName(t.Na(Z,Q)),a.app.setPath(";
 const LINUX_APP_NAME_SETUP =
   "a.app.setName(t.Na(Z,Q)),process.platform===`linux`&&a.app.setDesktopName(`chatgpt-desktop.desktop`),a.app.setPath(";
 const LINUX_TRAY_ICON_SIZE = 64;
+const LINUX_QUIT_GRACE_MS = 10_000;
 
 const REPLACEMENTS = [
   [
@@ -33,6 +34,10 @@ const REPLACEMENTS = [
   [
     "for(let e of a){let t=c.nativeImage.createFromPath(e);if(!t.isEmpty())return t}return null}function q9",
     `for(let e of a){let t=c.nativeImage.createFromPath(e);if(!t.isEmpty()){let e=t.getSize();return process.platform===\`linux\`&&(e.width>${LINUX_TRAY_ICON_SIZE}||e.height>${LINUX_TRAY_ICON_SIZE})?t.resize({width:${LINUX_TRAY_ICON_SIZE},height:${LINUX_TRAY_ICON_SIZE},quality:\`best\`}):t}}return null}function q9`,
+  ],
+  [
+    "{label:b6(this.appName),click:()=>{c.app.quit()}}]}updateChronicleTrayIcon",
+    `{label:b6(this.appName),click:()=>{process.platform===\`linux\`&&!c.app.__linuxTrayQuitFallback&&(c.app.__linuxTrayQuitFallback=!0,c.app.once(\`will-quit\`,()=>{let e=setTimeout(()=>{c.app.exit(0)},${LINUX_QUIT_GRACE_MS});e.unref?.()})),c.app.quit()}}]}updateChronicleTrayIcon`,
   ],
 ];
 

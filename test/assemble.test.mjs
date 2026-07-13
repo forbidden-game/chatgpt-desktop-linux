@@ -1,4 +1,12 @@
 import assert from "node:assert/strict";
+import {
+  mkdtemp,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 
 import {
@@ -6,11 +14,24 @@ import {
   expectedElectronSha256,
 } from "../src/electron-runtime.mjs";
 import {
+  copyReadableFile,
   nativeBuildManifest,
   nativeRuntimeFiles,
   pluginCompatibilityPlan,
   selectedResourceMembers,
 } from "../src/assemble.mjs";
+
+test("copyReadableFile does not preserve private DMG permissions", async (t) => {
+  const root = await mkdtemp(join(tmpdir(), "chatgpt-readable-resource-test-"));
+  const source = join(root, "source.png");
+  const destination = join(root, "destination.png");
+  t.after(() => rm(root, { force: true, recursive: true }));
+
+  await writeFile(source, "tray icon", { mode: 0o600 });
+  await copyReadableFile(source, destination);
+
+  assert.equal((await stat(destination)).mode & 0o777, 0o644);
+});
 
 test("electronArtifactName maps the supported v1 target", () => {
   assert.equal(

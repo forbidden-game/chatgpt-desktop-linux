@@ -18,6 +18,7 @@ const fixture = [
   "function v6(e){let t=c.Menu.buildFromTemplate([{role:`quit`}]);return(Array.isArray(t)?t:t.items)[0]?.label??`Quit ${e}`}",
   "};j&&we();let Ee=er(",
   "for(let e of a){let t=c.nativeImage.createFromPath(e);if(!t.isEmpty())return t}return null}function q9(e){return e}",
+  "return[{label:b6(this.appName),click:()=>{c.app.quit()}}]}updateChronicleTrayIcon(e){return e}",
 ].join(";");
 
 const bootstrapFixture =
@@ -49,6 +50,10 @@ test("Linux desktop shell reuses upstream tray and renders an opaque title overl
   assert.match(
     patched,
     /process\.platform===`linux`&&\(e\.width>64\|\|e\.height>64\)\?t\.resize\(\{width:64,height:64,quality:`best`\}\):t/,
+  );
+  assert.match(
+    patched,
+    /process\.platform===`linux`&&!c\.app\.__linuxTrayQuitFallback&&\(c\.app\.__linuxTrayQuitFallback=!0,c\.app\.once\(`will-quit`,\(\)=>\{let e=setTimeout\(\(\)=>\{c\.app\.exit\(0\)\},10000\);e\.unref\?\.\(\)\}\)\),c\.app\.quit\(\)/,
   );
 });
 

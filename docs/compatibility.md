@@ -14,7 +14,9 @@ entry is not treated as proof that its Linux backend works.
 An isolated packaged-runtime smoke test was repeated with ChatGPT
 `26.707.61608` and Electron `42.1.0`. It verified native Wayland startup, GPU
 render-node ownership, the Electron renderer sandbox, local webview health, and
-the Codex CLI `0.144.1` app-server handshake.
+the Codex CLI `0.144.1` app-server handshake. KDE StatusNotifier registration
+and tray Quit were also verified: invoking Quit through the DBus menu removed
+the Electron main process, all child processes, and the tray registration.
 
 The complete interactive runtime checks below were last repeated with ChatGPT
 `26.707.30751` and Electron `42.1.0`:
@@ -50,6 +52,14 @@ isolated directories, and process-tree sampling. Treat a candidate as a likely
 regression when its total average exceeds both the baseline by 25% and by 0.5
 CPU percentage points. Repeat a failed comparison once before rejecting an
 update, because short desktop samples can contain compositor or network noise.
+
+Tray restoration was checked separately with two copies of the same
+`26.707.61608` build and identical warmed profiles. Both copies shared the same
+Electron and application files; only the tray icon permissions differed. Across
+three paired full-process-tree samples, median proportional set size was
+`481641 KiB` without a tray and `481782 KiB` with the restored tray, a `141 KiB`
+(`0.03%`) difference. This is within measurement noise and passes the memory
+regression check.
 
 ## Preserved from the official DMG
 
