@@ -5,14 +5,14 @@ entry is not treated as proof that its Linux backend works.
 
 ## Build verified
 
-- ChatGPT `26.707.62119` with Electron `42.1.0`.
+- ChatGPT `26.707.71524` with Electron `42.1.0`.
 - complete assembly with all five fail-closed Linux patches applied.
 - deterministic Debian packaging and package-content smoke checks.
 
 ## Runtime verified on Kubuntu
 
 An isolated packaged-runtime smoke test was repeated with ChatGPT
-`26.707.62119` and Electron `42.1.0`. It verified native Wayland startup, GPU
+`26.707.71524` and Electron `42.1.0`. It verified native Wayland startup, GPU
 render-node ownership, the Electron renderer sandbox, local webview health, and
 the Codex CLI `0.144.1` app-server handshake. KDE StatusNotifier registration
 and tray Quit were last verified with `26.707.61608`: invoking Quit through the
@@ -37,16 +37,16 @@ The complete interactive runtime checks below were last repeated with ChatGPT
 ## Performance regression check
 
 Idle CPU was last compared on the same Kubuntu machine with ChatGPT
-`26.707.61608` as the baseline and `26.707.62119` as the candidate. Each build
+`26.707.62119` as the baseline and `26.707.71524` as the candidate. Each build
 used its own temporary Electron profile, host configuration directory, Codex
 home, application ID, and webview port. This prevents an active task or an
 already-running application from contaminating the comparison.
 
 After a 40-second settling period, `pidstat` sampled the launcher and its full
 process tree for three consecutive 10-second intervals. Summing the per-process
-`Average` CPU values produced approximately `0.33%` for the baseline and
-`0.37%` for the candidate. The `0.04` percentage-point increase is below the
-regression threshold and passes.
+`Average` CPU values produced approximately `1.03%` for the baseline and
+`0.76%` for the candidate. The candidate stayed below the baseline, so the
+comparison passes.
 
 For future updates, use the same machine, display backend, settling time,
 isolated directories, and process-tree sampling. Treat a candidate as a likely
