@@ -32,6 +32,7 @@ async function dryRun(args = [], env = {}) {
       HOME: "/tmp/chatgpt-home",
       XDG_CONFIG_DIRS: "/tmp/system-config",
       XDG_CONFIG_HOME: "/tmp/chatgpt-host-config",
+      XDG_SESSION_TYPE: "wayland",
       ...env,
     },
   });
@@ -66,6 +67,19 @@ test("launcher exposes an explicit X11 fallback", async () => {
   assert.match(output, /--ozone-platform=x11/);
   assert.match(output, /--inspect/);
   assert.doesNotMatch(output, /--ozone-platform=wayland/);
+});
+
+test("launcher follows an X11 desktop session by default", async () => {
+  const output = await dryRun([], { XDG_SESSION_TYPE: "x11" });
+  assert.match(output, /--ozone-platform=x11/);
+  assert.doesNotMatch(output, /--ozone-platform=wayland/);
+});
+
+test("explicit Wayland selection overrides an X11 desktop session", async () => {
+  const output = await dryRun(["--wayland"], { XDG_SESSION_TYPE: "x11" });
+  assert.match(output, /--ozone-platform=wayland/);
+  assert.match(output, /--enable-features=WaylandWindowDecorations/);
+  assert.doesNotMatch(output, /--ozone-platform=x11/);
 });
 
 test("launcher cleans the Electron process group after its leader exits", async (t) => {

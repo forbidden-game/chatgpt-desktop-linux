@@ -9,7 +9,11 @@ if [[ "$host_config_home" == "$state_dir/xdg-config" ]]; then
   host_config_home="$HOME/.config"
 fi
 webview_port="${CHATGPT_WEBVIEW_PORT:-5186}"
-display_backend="${CHATGPT_DISPLAY_BACKEND:-wayland}"
+case "${XDG_SESSION_TYPE:-}" in
+  x11 | wayland) session_backend="$XDG_SESSION_TYPE" ;;
+  *) session_backend=wayland ;;
+esac
+display_backend="${CHATGPT_DISPLAY_BACKEND:-$session_backend}"
 electron_args=()
 export PATH="${CHATGPT_USER_PATH:-$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin}"
 
