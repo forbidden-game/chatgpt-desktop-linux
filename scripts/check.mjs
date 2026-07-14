@@ -9,6 +9,7 @@ const requiredFiles = [
   "build.sh",
   "download.sh",
   "install.sh",
+  "update.sh",
   "README.md",
   "NOTICE.md",
   "native/package-lock.json",

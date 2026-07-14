@@ -5,6 +5,16 @@ Latest supported ChatGPT app: **July 14, 2026** (`26.707.72221`).
 Unofficial, source-only builder for running the official Electron-based ChatGPT
 desktop app on Ubuntu and Kubuntu x86_64.
 
+## Update an existing clone
+
+```bash
+./update.sh
+```
+
+The updater fast-forwards the cloned repository, then builds and installs the
+latest supported app. It updates files on disk without restarting the running
+app. Restart ChatGPT yourself when convenient.
+
 ## Quick install
 
 ```bash
@@ -81,15 +91,7 @@ sudo apt install ./dist/chatgpt-desktop_*_amd64.deb
 The build fails closed on unexpected archive layouts, checksum mismatches,
 native-module drift, or changed patch points.
 
-## Update or remove
-
-```bash
-git pull --ff-only
-./install.sh
-```
-
-The installer updates files on disk without restarting the running app. Restart
-ChatGPT yourself when convenient.
+## Remove
 
 Remove the package with:
 
