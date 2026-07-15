@@ -10,13 +10,17 @@ import { sha256File } from "./electron-runtime.mjs";
 
 const VERSION = "26.426.12240";
 const ARTIFACT = `codex-primary-runtime-linux-x64-${VERSION}.tar.xz`;
-const URL = `https://persistent.oaistatic.com/codex-primary-runtime/${VERSION}/${ARTIFACT}`;
+const DOWNLOAD_URL = `https://persistent.oaistatic.com/codex-primary-runtime/${VERSION}/${ARTIFACT}`;
 const SHA256 = "db5624eb6efa36b66ec6f6dd0488cefb966e49636862aab6209a4336c1ca90c4";
 const MEMBER = "codex-primary-runtime/dependencies/bin/node_repl";
 
 export function browserRuntimeRelease(arch = process.arch) {
   if (arch !== "x64") throw new Error(`v1 browser runtime supports x64 only, not ${arch}`);
-  return { artifact: ARTIFACT, sha256: SHA256, url: URL, version: VERSION };
+  return { artifact: ARTIFACT, sha256: SHA256, url: DOWNLOAD_URL, version: VERSION };
+}
+
+export function nodeReplSupervisorSource() {
+  return new URL("../runtime/node_repl_supervisor.py", import.meta.url);
 }
 
 async function exists(path) {
@@ -69,8 +73,10 @@ export async function installBrowserRuntime(resourcesDir, workDir, options = {})
   await rm(extractDir, { force: true, recursive: true });
   await mkdir(extractDir, { recursive: true });
   await run("tar", ["-xJf", archive, "-C", extractDir, MEMBER]);
-  const destination = join(resourcesDir, "node_repl");
-  await copyFile(join(extractDir, MEMBER), destination);
-  await chmod(destination, 0o755);
+  const implementation = join(resourcesDir, "node_repl.bin");
+  const supervisor = join(resourcesDir, "node_repl");
+  await copyFile(join(extractDir, MEMBER), implementation);
+  await copyFile(nodeReplSupervisorSource(), supervisor);
+  await Promise.all([chmod(implementation, 0o755), chmod(supervisor, 0o755)]);
   return { ...release, sha256: actual };
 }

@@ -69,6 +69,12 @@ Use X11/XWayland only when needed:
 chatgpt-desktop --x11
 ```
 
+On X11, focusing a maximized ChatGPT window minimizes another maximized
+top-level ChatGPT window when they overlap by at least 95%. Electron does not
+treat a merely covered Linux window as hidden, so this keeps the covered
+renderer from consuming foreground CPU. Set
+`CHATGPT_X11_WINDOW_SUSPENSION=0` to disable this safeguard.
+
 The isolated profile is stored under
 `~/.local/state/chatgpt-desktop/profile-v1`.
 

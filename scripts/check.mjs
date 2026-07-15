@@ -17,6 +17,7 @@ const requiredFiles = [
   "docs/architecture.md",
   "docs/compatibility.md",
   "package.json",
+  "runtime/node_repl_supervisor.py",
   "runtime/webview_server.py",
 ];
 

@@ -10,6 +10,7 @@ import {
 import { applyLinuxChromeExtensionPatch } from "./chrome-extension.mjs";
 import { applyGitWatcherPatch } from "./git-watcher.mjs";
 import { applyOptInMemoryProbePatch } from "./memory-probe.mjs";
+import { applyX11WindowSuspensionPatch } from "./x11-window-suspension.mjs";
 
 export async function applyPatches(asarDir) {
   const worker = join(asarDir, ".vite", "build", "worker.js");
@@ -22,7 +23,8 @@ export async function applyPatches(asarDir) {
   const mainSource = await readFile(main, "utf8");
   const chromePatchedMain = applyLinuxChromeExtensionPatch(mainSource);
   const desktopPatchedMain = applyLinuxDesktopShellPatch(chromePatchedMain);
-  const patchedMain = applyOptInMemoryProbePatch(desktopPatchedMain);
+  const suspendedMain = applyX11WindowSuspensionPatch(desktopPatchedMain);
+  const patchedMain = applyOptInMemoryProbePatch(suspendedMain);
   await writeFile(main, patchedMain);
 
   const bootstrap = join(buildDir, selectBootstrapBundle(await readdir(buildDir)));
@@ -40,8 +42,11 @@ export async function applyPatches(asarDir) {
     id: "linux-desktop-shell",
     status: desktopPatchedMain === chromePatchedMain ? "already-applied" : "applied",
   }, {
+    id: "x11-window-suspension",
+    status: suspendedMain === desktopPatchedMain ? "already-applied" : "applied",
+  }, {
     id: "opt-in-memory-probe",
-    status: patchedMain === desktopPatchedMain ? "already-applied" : "applied",
+    status: patchedMain === suspendedMain ? "already-applied" : "applied",
   }, {
     id: "linux-desktop-identity",
     status: patchedBootstrap === bootstrapSource ? "already-applied" : "applied",

@@ -49,6 +49,8 @@ matrix, updater, or target-dispatch abstraction.
 - Keep X11 as an explicit compatibility choice.
 - Do not modify the user's global input-method configuration.
 - Do not patch optional product features without a reproduced Linux failure.
+- Reclaim bundled helper processes only after their protocol has no pending
+  request; never use a fixed lifetime for active work.
 
 ## Acceptance surface
 

@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-import { browserRuntimeRelease } from "../src/browser-runtime.mjs";
+import {
+  browserRuntimeRelease,
+  nodeReplSupervisorSource,
+} from "../src/browser-runtime.mjs";
 
 test("browser runtime release is pinned for reproducible x64 builds", () => {
   assert.deepEqual(browserRuntimeRelease("x64"), {
@@ -11,4 +15,11 @@ test("browser runtime release is pinned for reproducible x64 builds", () => {
     version: "26.426.12240",
   });
   assert.throws(() => browserRuntimeRelease("arm64"), /x64 only/u);
+});
+
+test("browser runtime resolves the packaged node_repl supervisor", async () => {
+  const source = nodeReplSupervisorSource();
+
+  assert.match(source.pathname, /\/runtime\/node_repl_supervisor\.py$/u);
+  assert.match(await readFile(source, "utf8"), /^#!\/usr\/bin\/env python3\n/u);
 });

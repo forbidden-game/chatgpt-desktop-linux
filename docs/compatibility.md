@@ -6,7 +6,7 @@ entry is not treated as proof that its Linux backend works.
 ## Build verified
 
 - ChatGPT `26.707.72221` with Electron `42.1.0`.
-- complete assembly with all five fail-closed Linux patches applied.
+- complete assembly with all six fail-closed Linux patches applied.
 - deterministic Debian packaging and package-content smoke checks.
 
 ## Runtime verified on Kubuntu
@@ -14,12 +14,13 @@ entry is not treated as proof that its Linux backend works.
 An isolated packaged-runtime smoke test was repeated with ChatGPT
 `26.707.72221` and Electron `42.1.0`. In the current X11 desktop session, it
 verified X11 startup, GPU render-node ownership, the Electron renderer sandbox,
-local webview health, and the Codex CLI `0.144.1` app-server handshake. Native
-Wayland startup was last repeated with `26.707.71524`; the current test session
-has no Wayland display socket. KDE StatusNotifier registration and tray Quit
-were last verified with `26.707.61608`: invoking Quit through the DBus menu
-removed the Electron main process, all child processes, and the tray
-registration.
+local webview health, the Codex CLI `0.144.1` app-server handshake, real
+`node_repl` initialization and idle cleanup, and bidirectional focus switching
+between overlapping maximized windows. Native Wayland startup was last repeated
+with `26.707.71524`; the current test session has no Wayland display socket. KDE
+StatusNotifier registration and tray Quit were last verified with
+`26.707.61608`: invoking Quit through the DBus menu removed the Electron main
+process, all child processes, and the tray registration.
 
 The complete interactive runtime checks below were last repeated with ChatGPT
 `26.707.30751` and Electron `42.1.0`:
@@ -64,6 +65,29 @@ three paired full-process-tree samples, median proportional set size was
 (`0.03%`) difference. This is within measurement noise and passes the memory
 regression check.
 
+## Long-session safeguards
+
+A 21-hour live X11 session reproduced two independent accumulation failures.
+Two maximized ChatGPT windows occupied the same bounds, while both covered and
+focused renderers continued using foreground CPU. The Codex app-server also
+retained 17 idle `node_repl` children created across earlier browser-tool calls.
+A restart cleared both symptoms but did not remove either cause.
+
+The Linux build now guards those lifecycle boundaries:
+
+- On X11, focusing one maximized top-level ChatGPT window minimizes another
+  maximized window only when their bounds overlap by at least 95%. Side-by-side,
+  multi-monitor, child, non-maximized, and Wayland windows are left unchanged.
+- The official `node_repl` implementation runs behind a transparent supervisor.
+  It terminates the helper process group after five minutes without protocol
+  traffic only when no JSON-RPC request is pending. Parent-pipe closure also
+  cleans it up immediately, while a pending long-running request disables the
+  idle timeout until its response arrives.
+
+The timeout can be changed with
+`CHATGPT_NODE_REPL_IDLE_TIMEOUT_SECONDS`; invalid and non-positive values use
+the five-minute default.
+
 ## Preserved from the official DMG
 
 - Browser and Chrome resources, including Linux x64 native prebuilds.
@@ -82,7 +106,6 @@ regression check.
 ## Not yet verified
 
 - end-to-end execution of every preserved plugin;
-- live X11 fallback beyond launcher argument tests;
 - installation over every supported Ubuntu/Kubuntu release;
 - `codex://` protocol registration, which the Debian package intentionally does
   not claim.
