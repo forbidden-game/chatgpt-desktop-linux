@@ -23,6 +23,18 @@ const fixture = [
 
 const bootstrapFixture =
   "a.app.setName(t.Na(Z,Q)),a.app.setPath(`userData`,ee({appDataPath:a.app.getPath(`appData`)}))";
+const currentBootstrapFixture =
+  "a.app.setName(t.Ka(Z,Q)),a.app.setPath(`userData`,ee({appDataPath:a.app.getPath(`appData`),buildFlavor:Z,env:process.env}))";
+
+const nativeLinuxTrayFixture = [
+  "function dv(e){switch(e){case n.nl.ChatGPT:return[`chatgptTemplate.png`,`chatgptTemplate@2x.png`]}}",
+  "constructor(){if(this.appName=c,process.platform===`linux`){this.tray.on(`click`,()=>{this.onOpenMainWindow()}),this.updatePersistentTrayMenu();return}}",
+  "updatePersistentTrayMenu(){process.platform===`linux`&&this.tray.setContextMenu(c.Menu.buildFromTemplate(this.getNativeTrayMenuItems()))}",
+  "if((process.platform===`win32`||process.platform===`linux`)&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){e.preventDefault()}",
+  "function _8(e){let{width:t,height:n}=e.getSize();return!t||!n||t<=g8&&n<=g8?e:e.resize({width:g8,height:g8,quality:`best`})}",
+  "function j9(e=1){return{color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Pie:Nie,height:Math.round(Mie*e)}}",
+  "return[{label:A8(this.appName),click:()=>{c.app.quit()}}]}updateChronicleTrayIcon(e){return e}",
+].join(";");
 
 test("Linux desktop shell reuses upstream tray and renders an opaque title overlay", () => {
   const patched = applyLinuxDesktopShellPatch(fixture);
@@ -66,6 +78,19 @@ test("Linux desktop shell patch is exact and idempotent", () => {
   );
 });
 
+test("Linux desktop shell preserves native tray support and remaining safeguards", () => {
+  const patched = applyLinuxDesktopShellPatch(nativeLinuxTrayFixture);
+
+  assert.match(patched, /chatgptTemplate@2x\.png/u);
+  assert.match(patched, /updatePersistentTrayMenu\(\)/u);
+  assert.match(
+    patched,
+    /color:process\.platform===`linux`\?\(c\.nativeTheme\.shouldUseDarkColors\?`#1f1f1f`:`#f9f9f9`\):k9/u,
+  );
+  assert.match(patched, /__linuxTrayQuitFallback/u);
+  assert.equal(applyLinuxDesktopShellPatch(patched), patched);
+});
+
 test("main bundle selection fails closed", () => {
   assert.equal(selectMainBundle(["worker.js", "main-abc.js"]), "main-abc.js");
   assert.throws(() => selectMainBundle(["worker.js"]), /exactly one main bundle/);
@@ -85,6 +110,15 @@ test("Linux bootstrap declares the packaged desktop identity", () => {
   assert.throws(
     () => applyLinuxDesktopIdentityPatch("upstream drift"),
     /unsupported desktop identity source/,
+  );
+});
+
+test("Linux bootstrap accepts the current upstream symbol variant", () => {
+  const patched = applyLinuxDesktopIdentityPatch(currentBootstrapFixture);
+
+  assert.match(
+    patched,
+    /a\.app\.setName\(t\.Ka\(Z,Q\)\),process\.platform===`linux`&&a\.app\.setDesktopName\(`chatgpt-desktop\.desktop`\)/u,
   );
 });
 

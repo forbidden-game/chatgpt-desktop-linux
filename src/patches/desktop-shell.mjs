@@ -1,10 +1,30 @@
 const MARKER = "/* chatgpt-linux: linux-desktop-shell */";
 const IDENTITY_MARKER = "/* chatgpt-linux: linux-desktop-identity */";
-const APP_NAME_SETUP = "a.app.setName(t.Na(Z,Q)),a.app.setPath(";
-const LINUX_APP_NAME_SETUP =
-  "a.app.setName(t.Na(Z,Q)),process.platform===`linux`&&a.app.setDesktopName(`chatgpt-desktop.desktop`),a.app.setPath(";
+const APP_NAME_SETUP_VARIANTS = [
+  "a.app.setName(t.Na(Z,Q)),a.app.setPath(",
+  "a.app.setName(t.Ka(Z,Q)),a.app.setPath(",
+];
 const LINUX_TRAY_ICON_SIZE = 64;
 const LINUX_QUIT_GRACE_MS = 10_000;
+
+const NATIVE_LINUX_TRAY_SUPPORT = [
+  "case n.nl.ChatGPT:return[`chatgptTemplate.png`,`chatgptTemplate@2x.png`]",
+  "process.platform===`linux`){this.tray.on(`click`,()=>{this.onOpenMainWindow()}),this.updatePersistentTrayMenu();return}",
+  "updatePersistentTrayMenu(){process.platform===`linux`&&this.tray.setContextMenu(c.Menu.buildFromTemplate(this.getNativeTrayMenuItems()))}",
+  "if((process.platform===`win32`||process.platform===`linux`)&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){",
+  "function _8(e){let{width:t,height:n}=e.getSize();return!t||!n||t<=g8&&n<=g8?e:e.resize({width:g8,height:g8,quality:`best`})}",
+];
+
+const NATIVE_LINUX_REPLACEMENTS = [
+  [
+    "color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Pie:Nie",
+    "color:process.platform===`linux`?(c.nativeTheme.shouldUseDarkColors?`#1f1f1f`:`#f9f9f9`):k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Pie:Nie",
+  ],
+  [
+    "{label:A8(this.appName),click:()=>{c.app.quit()}}]}updateChronicleTrayIcon",
+    `{label:A8(this.appName),click:()=>{process.platform===\`linux\`&&!c.app.__linuxTrayQuitFallback&&(c.app.__linuxTrayQuitFallback=!0,c.app.once(\`will-quit\`,()=>{let e=setTimeout(()=>{c.app.exit(0)},${LINUX_QUIT_GRACE_MS});e.unref?.()})),c.app.quit()}}]}updateChronicleTrayIcon`,
+  ],
+];
 
 const REPLACEMENTS = [
   [
@@ -80,6 +100,13 @@ function replaceExactlyOneVariant(source, variants) {
 
 export function applyLinuxDesktopShellPatch(source) {
   if (source.includes(MARKER)) return source;
+  if (NATIVE_LINUX_TRAY_SUPPORT.every((snippet) => source.includes(snippet))) {
+    const patched = NATIVE_LINUX_REPLACEMENTS.reduce(
+      (current, [original, replacement]) => replaceExactlyOnce(current, original, replacement),
+      source,
+    );
+    return `${MARKER}${patched}`;
+  }
   const commonPatched = REPLACEMENTS.reduce(
     (current, [original, replacement]) => replaceExactlyOnce(current, original, replacement),
     source,
@@ -90,10 +117,16 @@ export function applyLinuxDesktopShellPatch(source) {
 
 export function applyLinuxDesktopIdentityPatch(source) {
   if (source.includes(IDENTITY_MARKER)) return source;
-  if (!source.includes(APP_NAME_SETUP)) {
+  const matches = APP_NAME_SETUP_VARIANTS.filter((variant) => source.includes(variant));
+  if (matches.length !== 1) {
     throw new Error("unsupported desktop identity source");
   }
-  return `${IDENTITY_MARKER}${source.replace(APP_NAME_SETUP, LINUX_APP_NAME_SETUP)}`;
+  const appNameSetup = matches[0];
+  const linuxAppNameSetup = appNameSetup.replace(
+    ",a.app.setPath(",
+    ",process.platform===`linux`&&a.app.setDesktopName(`chatgpt-desktop.desktop`),a.app.setPath(",
+  );
+  return `${IDENTITY_MARKER}${source.replace(appNameSetup, linuxAppNameSetup)}`;
 }
 
 function selectBundle(names, prefix) {

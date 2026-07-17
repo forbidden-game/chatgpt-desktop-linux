@@ -5,14 +5,22 @@ entry is not treated as proof that its Linux backend works.
 
 ## Build verified
 
-- ChatGPT `26.707.91948` with Electron `42.1.0`.
-- complete assembly with all six fail-closed Linux patches applied.
+- ChatGPT `26.715.21425` with Electron `42.3.0`.
+- complete assembly with all six fail-closed Linux compatibility checks
+  satisfied.
 - deterministic Debian packaging and package-content smoke checks.
+
+This release moves Chrome/Chromium discovery, Linux profile lookup, tray
+creation, persistent tray menus, close-to-tray, and tray icon sizing into the
+official upstream bundle. The builder recognizes those exact native
+implementations and no longer patches them. It retains the Linux title-control
+surface, tray Quit fallback, desktop identity, X11 window suspension, memory
+probe, and Git watcher adaptations.
 
 ## Runtime verified on Kubuntu
 
 An isolated packaged-runtime smoke test was repeated with ChatGPT
-`26.707.91948` and Electron `42.1.0`. In the current X11 desktop session, it
+`26.715.21425` and Electron `42.3.0`. In the current X11 desktop session, it
 verified X11 startup, GPU render-node ownership, the Electron renderer sandbox,
 local webview health, and the Codex CLI `0.144.1` app-server handshake. Real
 `node_repl` initialization and idle cleanup, plus bidirectional focus switching
@@ -41,16 +49,16 @@ The complete interactive runtime checks below were last repeated with ChatGPT
 ## Performance regression check
 
 Idle CPU was last compared on the same Kubuntu machine with ChatGPT
-`26.707.72221` as the baseline and `26.707.91948` as the candidate. Each build
+`26.707.91948` as the baseline and `26.715.21425` as the candidate. Each build
 used its own temporary Electron profile, host configuration directory, Codex
 home, application ID, and webview port. This prevents an active task or an
 already-running application from contaminating the comparison.
 
 After a 40-second settling period, `pidstat` sampled the launcher and its full
 process tree for three consecutive 10-second intervals. Summing the per-process
-`Average` CPU values produced approximately `0.47%` for the baseline and
-`0.46%` for the candidate on the required repeat run. The candidate stayed
-within measurement noise of the baseline, so the comparison passes.
+`Average` CPU values produced approximately `0.46%` for both the baseline and
+candidate on the required repeat run. The candidate stayed within measurement
+noise of the baseline, so the comparison passes.
 
 For future updates, use the same machine, display backend, settling time,
 isolated directories, and process-tree sampling. Treat a candidate as a likely
