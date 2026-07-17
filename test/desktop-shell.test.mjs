@@ -27,6 +27,8 @@ const currentBootstrapFixture =
   "a.app.setName(t.Ka(Z,Q)),a.app.setPath(`userData`,ee({appDataPath:a.app.getPath(`appData`),buildFlavor:Z,env:process.env}))";
 
 const nativeLinuxTrayFixture = [
+  "async function gj(e){let t=e;if(typeof t.whenReady!=`function`)return process.platform!==`linux`;try{return await t.whenReady(),!0}catch{return!1}}",
+  "function _j(e){let t=e;return typeof t.isReady==`function`?t.isReady():process.platform!==`linux`}",
   "function dv(e){switch(e){case n.nl.ChatGPT:return[`chatgptTemplate.png`,`chatgptTemplate@2x.png`]}}",
   "constructor(){if(this.appName=c,process.platform===`linux`){this.tray.on(`click`,()=>{this.onOpenMainWindow()}),this.updatePersistentTrayMenu();return}}",
   "updatePersistentTrayMenu(){process.platform===`linux`&&this.tray.setContextMenu(c.Menu.buildFromTemplate(this.getNativeTrayMenuItems()))}",
@@ -88,6 +90,8 @@ test("Linux desktop shell preserves native tray support and remaining safeguards
     /color:process\.platform===`linux`\?\(c\.nativeTheme\.shouldUseDarkColors\?`#1f1f1f`:`#f9f9f9`\):k9/u,
   );
   assert.match(patched, /__linuxTrayQuitFallback/u);
+  assert.match(patched, /typeof t\.whenReady!=`function`\)return!0/u);
+  assert.match(patched, /typeof t\.isReady==`function`\?t\.isReady\(\):!0/u);
   assert.equal(applyLinuxDesktopShellPatch(patched), patched);
 });
 

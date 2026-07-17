@@ -17,6 +17,14 @@ const NATIVE_LINUX_TRAY_SUPPORT = [
 
 const NATIVE_LINUX_REPLACEMENTS = [
   [
+    "async function gj(e){let t=e;if(typeof t.whenReady!=`function`)return process.platform!==`linux`;try{return await t.whenReady(),!0}catch{return!1}}",
+    "async function gj(e){let t=e;if(typeof t.whenReady!=`function`)return!0;try{return await t.whenReady(),!0}catch{return!1}}",
+  ],
+  [
+    "function _j(e){let t=e;return typeof t.isReady==`function`?t.isReady():process.platform!==`linux`}",
+    "function _j(e){let t=e;return typeof t.isReady==`function`?t.isReady():!0}",
+  ],
+  [
     "color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Pie:Nie",
     "color:process.platform===`linux`?(c.nativeTheme.shouldUseDarkColors?`#1f1f1f`:`#f9f9f9`):k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Pie:Nie",
   ],

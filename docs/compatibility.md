@@ -13,9 +13,12 @@ entry is not treated as proof that its Linux backend works.
 This release moves Chrome/Chromium discovery, Linux profile lookup, tray
 creation, persistent tray menus, close-to-tray, and tray icon sizing into the
 official upstream bundle. The builder recognizes those exact native
-implementations and no longer patches them. It retains the Linux title-control
-surface, tray Quit fallback, desktop identity, X11 window suspension, memory
-probe, and Git watcher adaptations.
+implementations and no longer patches their behavior. The official Electron
+runtime does not expose the upstream bundle's optional `Tray.whenReady()` and
+`Tray.isReady()` extensions, so the builder preserves Electron's established
+constructor-ready behavior when those methods are absent. It also retains the
+Linux title-control surface, tray Quit fallback, desktop identity, X11 window
+suspension, memory probe, and Git watcher adaptations.
 
 ## Runtime verified on Kubuntu
 
