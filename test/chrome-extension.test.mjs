@@ -21,6 +21,12 @@ const nativeLinuxFixture = [
   "function sc({chromeConfigHome:e,homeDir:t,localAppDataDir:r,platform:i,xdgConfigHome:a}){if(i===`linux`){let r=n.In({chromeConfigHome:e,homeDir:t,xdgConfigHome:a});return n.Fn.map(e=>(0,d.join)(r,e.userDataDirName))}return[]}",
 ].join(";");
 
+const currentNativeLinuxFixture = [
+  "async function ec({extensionId:e,platform:t=process.platform,detectChromeCommand:n,runCommand:r=Ms}){if(t===`darwin`){await r(Xs,[`-b`,Ys,Qs(e)]);return}if(t===`win32`||t===`linux`){let i=(n??(t===`linux`?()=>nc(e):tc))();if(i==null)throw Error(t===`linux`?`Google Chrome or Chromium is not installed`:`Google Chrome is not installed`);await r(i,[Qs(e)]);return}throw Error(`Opening Chrome extension settings is only supported on macOS, Windows, and Linux`)}",
+  "function nc(e){let t=e.trim(),r=!1;for(let e of n.In){if(!oc((0,d.join)(n.Ln({chromeConfigHome:process.env.CHROME_CONFIG_HOME,homeDir:(0,u.homedir)(),xdgConfigHome:process.env.XDG_CONFIG_HOME}),e.userDataDirName),t))continue;r=!0;let i=rc(e);if(i!=null)return i}if(r)return null;for(let e of n.In){let t=rc(e);if(t!=null)return t}return null}",
+  "function sc({chromeConfigHome:e,homeDir:t,localAppDataDir:r,platform:i,xdgConfigHome:a}){if(i===`linux`){let r=n.Ln({chromeConfigHome:e,homeDir:t,xdgConfigHome:a});return n.In.map(e=>(0,d.join)(r,e.userDataDirName))}return[]}",
+].join(";");
+
 test("Linux Chrome extension patch uses the real profile and Chrome executable", () => {
   const patched = applyLinuxChromeExtensionPatch(fixture);
 
@@ -48,4 +54,11 @@ test("Linux Chrome extension patch accepts the current upstream bundle", () => {
 
 test("Linux Chrome extension patch preserves native upstream support", () => {
   assert.equal(applyLinuxChromeExtensionPatch(nativeLinuxFixture), nativeLinuxFixture);
+});
+
+test("Linux Chrome extension patch preserves current native upstream support", () => {
+  assert.equal(
+    applyLinuxChromeExtensionPatch(currentNativeLinuxFixture),
+    currentNativeLinuxFixture,
+  );
 });

@@ -25,6 +25,8 @@ const bootstrapFixture =
   "a.app.setName(t.Na(Z,Q)),a.app.setPath(`userData`,ee({appDataPath:a.app.getPath(`appData`)}))";
 const currentBootstrapFixture =
   "a.app.setName(t.Ka(Z,Q)),a.app.setPath(`userData`,ee({appDataPath:a.app.getPath(`appData`),buildFlavor:Z,env:process.env}))";
+const latestBootstrapFixture =
+  "a.app.setName(t.qa(Z,Q)),a.app.setPath(`userData`,ee({appDataPath:a.app.getPath(`appData`),buildFlavor:Z,env:process.env}))";
 
 const nativeLinuxTrayFixture = [
   "async function gj(e){let t=e;if(typeof t.whenReady!=`function`)return process.platform!==`linux`;try{return await t.whenReady(),!0}catch{return!1}}",
@@ -37,6 +39,11 @@ const nativeLinuxTrayFixture = [
   "function j9(e=1){return{color:k9,symbolColor:c.nativeTheme.shouldUseDarkColors?Pie:Nie,height:Math.round(Mie*e)}}",
   "return[{label:A8(this.appName),click:()=>{c.app.quit()}}]}updateChronicleTrayIcon(e){return e}",
 ].join(";");
+
+const currentNativeLinuxTrayFixture = nativeLinuxTrayFixture.replace(
+  "case n.nl.ChatGPT:",
+  "case n.rl.ChatGPT:",
+);
 
 test("Linux desktop shell reuses upstream tray and renders an opaque title overlay", () => {
   const patched = applyLinuxDesktopShellPatch(fixture);
@@ -95,6 +102,14 @@ test("Linux desktop shell preserves native tray support and remaining safeguards
   assert.equal(applyLinuxDesktopShellPatch(patched), patched);
 });
 
+test("Linux desktop shell accepts the current native tray symbol variant", () => {
+  const patched = applyLinuxDesktopShellPatch(currentNativeLinuxTrayFixture);
+
+  assert.match(patched, /case n\.rl\.ChatGPT/u);
+  assert.match(patched, /__linuxTrayQuitFallback/u);
+  assert.equal(applyLinuxDesktopShellPatch(patched), patched);
+});
+
 test("main bundle selection fails closed", () => {
   assert.equal(selectMainBundle(["worker.js", "main-abc.js"]), "main-abc.js");
   assert.throws(() => selectMainBundle(["worker.js"]), /exactly one main bundle/);
@@ -123,6 +138,15 @@ test("Linux bootstrap accepts the current upstream symbol variant", () => {
   assert.match(
     patched,
     /a\.app\.setName\(t\.Ka\(Z,Q\)\),process\.platform===`linux`&&a\.app\.setDesktopName\(`chatgpt-desktop\.desktop`\)/u,
+  );
+});
+
+test("Linux bootstrap accepts the latest upstream symbol variant", () => {
+  const patched = applyLinuxDesktopIdentityPatch(latestBootstrapFixture);
+
+  assert.match(
+    patched,
+    /a\.app\.setName\(t\.qa\(Z,Q\)\),process\.platform===`linux`&&a\.app\.setDesktopName\(`chatgpt-desktop\.desktop`\)/u,
   );
 });
 

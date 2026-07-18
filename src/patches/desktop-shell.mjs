@@ -3,12 +3,17 @@ const IDENTITY_MARKER = "/* chatgpt-linux: linux-desktop-identity */";
 const APP_NAME_SETUP_VARIANTS = [
   "a.app.setName(t.Na(Z,Q)),a.app.setPath(",
   "a.app.setName(t.Ka(Z,Q)),a.app.setPath(",
+  "a.app.setName(t.qa(Z,Q)),a.app.setPath(",
 ];
 const LINUX_TRAY_ICON_SIZE = 64;
 const LINUX_QUIT_GRACE_MS = 10_000;
 
-const NATIVE_LINUX_TRAY_SUPPORT = [
+const NATIVE_LINUX_TRAY_ICON_VARIANTS = [
   "case n.nl.ChatGPT:return[`chatgptTemplate.png`,`chatgptTemplate@2x.png`]",
+  "case n.rl.ChatGPT:return[`chatgptTemplate.png`,`chatgptTemplate@2x.png`]",
+];
+
+const NATIVE_LINUX_TRAY_SUPPORT = [
   "process.platform===`linux`){this.tray.on(`click`,()=>{this.onOpenMainWindow()}),this.updatePersistentTrayMenu();return}",
   "updatePersistentTrayMenu(){process.platform===`linux`&&this.tray.setContextMenu(c.Menu.buildFromTemplate(this.getNativeTrayMenuItems()))}",
   "if((process.platform===`win32`||process.platform===`linux`)&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){",
@@ -108,7 +113,10 @@ function replaceExactlyOneVariant(source, variants) {
 
 export function applyLinuxDesktopShellPatch(source) {
   if (source.includes(MARKER)) return source;
-  if (NATIVE_LINUX_TRAY_SUPPORT.every((snippet) => source.includes(snippet))) {
+  if (
+    NATIVE_LINUX_TRAY_ICON_VARIANTS.some((snippet) => source.includes(snippet)) &&
+    NATIVE_LINUX_TRAY_SUPPORT.every((snippet) => source.includes(snippet))
+  ) {
     const patched = NATIVE_LINUX_REPLACEMENTS.reduce(
       (current, [original, replacement]) => replaceExactlyOnce(current, original, replacement),
       source,

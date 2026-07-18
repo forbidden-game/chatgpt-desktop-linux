@@ -1,9 +1,16 @@
 const MARKER = "/* chatgpt-linux: linux-chrome-extension */";
 
-const NATIVE_LINUX_SUPPORT = [
-  "if(t===`win32`||t===`linux`){let i=(n??(t===`linux`?()=>nc(e):tc))();if(i==null)throw Error(t===`linux`?`Google Chrome or Chromium is not installed`:`Google Chrome is not installed`);await r(i,[Qs(e)]);return}throw Error(`Opening Chrome extension settings is only supported on macOS, Windows, and Linux`)",
-  "function nc(e){let t=e.trim(),r=!1;for(let e of n.Fn){if(!oc((0,d.join)(n.In({chromeConfigHome:process.env.CHROME_CONFIG_HOME,homeDir:(0,u.homedir)(),xdgConfigHome:process.env.XDG_CONFIG_HOME}),e.userDataDirName),t))continue;r=!0;let i=rc(e);if(i!=null)return i}if(r)return null;for(let e of n.Fn){let t=rc(e);if(t!=null)return t}return null}",
-  "if(i===`linux`){let r=n.In({chromeConfigHome:e,homeDir:t,xdgConfigHome:a});return n.Fn.map(e=>(0,d.join)(r,e.userDataDirName))}",
+const NATIVE_LINUX_VARIANTS = [
+  [
+    "if(t===`win32`||t===`linux`){let i=(n??(t===`linux`?()=>nc(e):tc))();if(i==null)throw Error(t===`linux`?`Google Chrome or Chromium is not installed`:`Google Chrome is not installed`);await r(i,[Qs(e)]);return}throw Error(`Opening Chrome extension settings is only supported on macOS, Windows, and Linux`)",
+    "function nc(e){let t=e.trim(),r=!1;for(let e of n.Fn){if(!oc((0,d.join)(n.In({chromeConfigHome:process.env.CHROME_CONFIG_HOME,homeDir:(0,u.homedir)(),xdgConfigHome:process.env.XDG_CONFIG_HOME}),e.userDataDirName),t))continue;r=!0;let i=rc(e);if(i!=null)return i}if(r)return null;for(let e of n.Fn){let t=rc(e);if(t!=null)return t}return null}",
+    "if(i===`linux`){let r=n.In({chromeConfigHome:e,homeDir:t,xdgConfigHome:a});return n.Fn.map(e=>(0,d.join)(r,e.userDataDirName))}",
+  ],
+  [
+    "if(t===`win32`||t===`linux`){let i=(n??(t===`linux`?()=>nc(e):tc))();if(i==null)throw Error(t===`linux`?`Google Chrome or Chromium is not installed`:`Google Chrome is not installed`);await r(i,[Qs(e)]);return}throw Error(`Opening Chrome extension settings is only supported on macOS, Windows, and Linux`)",
+    "function nc(e){let t=e.trim(),r=!1;for(let e of n.In){if(!oc((0,d.join)(n.Ln({chromeConfigHome:process.env.CHROME_CONFIG_HOME,homeDir:(0,u.homedir)(),xdgConfigHome:process.env.XDG_CONFIG_HOME}),e.userDataDirName),t))continue;r=!0;let i=rc(e);if(i!=null)return i}if(r)return null;for(let e of n.In){let t=rc(e);if(t!=null)return t}return null}",
+    "if(i===`linux`){let r=n.Ln({chromeConfigHome:e,homeDir:t,xdgConfigHome:a});return n.In.map(e=>(0,d.join)(r,e.userDataDirName))}",
+  ],
 ];
 
 const UPSTREAM_VARIANTS = [
@@ -47,7 +54,13 @@ function replaceExactlyOnce(source, original, replacement) {
 
 export function applyLinuxChromeExtensionPatch(source) {
   if (source.includes(MARKER)) return source;
-  if (NATIVE_LINUX_SUPPORT.every((snippet) => source.includes(snippet))) return source;
+  if (
+    NATIVE_LINUX_VARIANTS.some((variant) =>
+      variant.every((snippet) => source.includes(snippet))
+    )
+  ) {
+    return source;
+  }
   const replacements = UPSTREAM_VARIANTS.find((variant) =>
     variant.every(([original]) => source.includes(original))
   );
