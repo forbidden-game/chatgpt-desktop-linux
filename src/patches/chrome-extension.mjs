@@ -11,6 +11,11 @@ const NATIVE_LINUX_VARIANTS = [
     "function nc(e){let t=e.trim(),r=!1;for(let e of n.In){if(!oc((0,d.join)(n.Ln({chromeConfigHome:process.env.CHROME_CONFIG_HOME,homeDir:(0,u.homedir)(),xdgConfigHome:process.env.XDG_CONFIG_HOME}),e.userDataDirName),t))continue;r=!0;let i=rc(e);if(i!=null)return i}if(r)return null;for(let e of n.In){let t=rc(e);if(t!=null)return t}return null}",
     "if(i===`linux`){let r=n.Ln({chromeConfigHome:e,homeDir:t,xdgConfigHome:a});return n.In.map(e=>(0,d.join)(r,e.userDataDirName))}",
   ],
+  [
+    "if(t===`win32`||t===`linux`){let i=(n??(t===`linux`?()=>tc(e):ec))();if(i==null)throw Error(t===`linux`?`Google Chrome or Chromium is not installed`:`Google Chrome is not installed`);await r(i,[Zs(e)]);return}throw Error(`Opening Chrome extension settings is only supported on macOS, Windows, and Linux`)",
+    "function tc(e){let t=e.trim(),r=!1;for(let e of n.In){if(!ac((0,f.join)(n.Ln({chromeConfigHome:process.env.CHROME_CONFIG_HOME,homeDir:(0,d.homedir)(),xdgConfigHome:process.env.XDG_CONFIG_HOME}),e.userDataDirName),t))continue;r=!0;let i=nc(e);if(i!=null)return i}if(r)return null;for(let e of n.In){let t=nc(e);if(t!=null)return t}return null}",
+    "if(i===`linux`){let r=n.Ln({chromeConfigHome:e,homeDir:t,xdgConfigHome:a});return n.In.map(e=>(0,f.join)(r,e.userDataDirName))}",
+  ],
 ];
 
 const UPSTREAM_VARIANTS = [

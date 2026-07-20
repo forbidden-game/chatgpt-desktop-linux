@@ -45,6 +45,18 @@ const currentNativeLinuxTrayFixture = nativeLinuxTrayFixture.replace(
   "case n.rl.ChatGPT:",
 );
 
+const latestNativeLinuxTrayFixture = [
+  "async function hj(e){let t=e;if(typeof t.whenReady!=`function`)return process.platform!==`linux`;try{return await t.whenReady(),!0}catch{return!1}}",
+  "function gj(e){let t=e;return typeof t.isReady==`function`?t.isReady():process.platform!==`linux`}",
+  "function P_(e){switch(e){case n.rl.ChatGPT:return[`chatgptTemplate.png`,`chatgptTemplate@2x.png`]}}",
+  "constructor(){if(this.appName=c,process.platform===`linux`){this.tray.on(`click`,()=>{this.onOpenMainWindow()}),this.updatePersistentTrayMenu();return}}",
+  "updatePersistentTrayMenu(){process.platform===`linux`&&this.tray.setContextMenu(l.Menu.buildFromTemplate(this.getNativeTrayMenuItems()))}",
+  "if((process.platform===`win32`||process.platform===`linux`)&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){e.preventDefault()}",
+  "function g8(e){let{width:t,height:n}=e.getSize();return!t||!n||t<=h8&&n<=h8?e:e.resize({width:h8,height:h8,quality:`best`})}",
+  "function j9(e=1){return{color:k9,symbolColor:l.nativeTheme.shouldUseDarkColors?Nie:Mie,height:Math.round(jie*e)}}",
+  "return[{label:k8(this.appName),click:()=>{l.app.quit()}}]}updateChronicleTrayIcon(e){return e}",
+].join(";");
+
 test("Linux desktop shell reuses upstream tray and renders an opaque title overlay", () => {
   const patched = applyLinuxDesktopShellPatch(fixture);
 
@@ -106,6 +118,20 @@ test("Linux desktop shell accepts the current native tray symbol variant", () =>
   const patched = applyLinuxDesktopShellPatch(currentNativeLinuxTrayFixture);
 
   assert.match(patched, /case n\.rl\.ChatGPT/u);
+  assert.match(patched, /__linuxTrayQuitFallback/u);
+  assert.equal(applyLinuxDesktopShellPatch(patched), patched);
+});
+
+test("Linux desktop shell accepts the latest native tray symbol variant", () => {
+  const patched = applyLinuxDesktopShellPatch(latestNativeLinuxTrayFixture);
+
+  assert.match(patched, /case n\.rl\.ChatGPT/u);
+  assert.match(patched, /typeof t\.whenReady!=`function`\)return!0/u);
+  assert.match(patched, /typeof t\.isReady==`function`\?t\.isReady\(\):!0/u);
+  assert.match(
+    patched,
+    /color:process\.platform===`linux`\?\(l\.nativeTheme\.shouldUseDarkColors\?`#1f1f1f`:`#f9f9f9`\):k9/u,
+  );
   assert.match(patched, /__linuxTrayQuitFallback/u);
   assert.equal(applyLinuxDesktopShellPatch(patched), patched);
 });

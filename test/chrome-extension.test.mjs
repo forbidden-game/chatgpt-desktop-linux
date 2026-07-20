@@ -27,6 +27,12 @@ const currentNativeLinuxFixture = [
   "function sc({chromeConfigHome:e,homeDir:t,localAppDataDir:r,platform:i,xdgConfigHome:a}){if(i===`linux`){let r=n.Ln({chromeConfigHome:e,homeDir:t,xdgConfigHome:a});return n.In.map(e=>(0,d.join)(r,e.userDataDirName))}return[]}",
 ].join(";");
 
+const latestNativeLinuxFixture = [
+  "async function $s({extensionId:e,platform:t=process.platform,detectChromeCommand:n,runCommand:r=js}){if(t===`darwin`){await r(Ys,[`-b`,Js,Zs(e)]);return}if(t===`win32`||t===`linux`){let i=(n??(t===`linux`?()=>tc(e):ec))();if(i==null)throw Error(t===`linux`?`Google Chrome or Chromium is not installed`:`Google Chrome is not installed`);await r(i,[Zs(e)]);return}throw Error(`Opening Chrome extension settings is only supported on macOS, Windows, and Linux`)}",
+  "function tc(e){let t=e.trim(),r=!1;for(let e of n.In){if(!ac((0,f.join)(n.Ln({chromeConfigHome:process.env.CHROME_CONFIG_HOME,homeDir:(0,d.homedir)(),xdgConfigHome:process.env.XDG_CONFIG_HOME}),e.userDataDirName),t))continue;r=!0;let i=nc(e);if(i!=null)return i}if(r)return null;for(let e of n.In){let t=nc(e);if(t!=null)return t}return null}",
+  "function oc({chromeConfigHome:e,homeDir:t,localAppDataDir:r,platform:i,xdgConfigHome:a}){if(i===`darwin`)return[(0,f.join)(t,`Library`,`Application Support`,`Google`,`Chrome`)];if(i===`win32`)return[(0,f.join)(r??(0,f.join)(t,`AppData`,`Local`),`Google`,`Chrome`,`User Data`)];if(i===`linux`){let r=n.Ln({chromeConfigHome:e,homeDir:t,xdgConfigHome:a});return n.In.map(e=>(0,f.join)(r,e.userDataDirName))}return[]}",
+].join(";");
+
 test("Linux Chrome extension patch uses the real profile and Chrome executable", () => {
   const patched = applyLinuxChromeExtensionPatch(fixture);
 
@@ -60,5 +66,12 @@ test("Linux Chrome extension patch preserves current native upstream support", (
   assert.equal(
     applyLinuxChromeExtensionPatch(currentNativeLinuxFixture),
     currentNativeLinuxFixture,
+  );
+});
+
+test("Linux Chrome extension patch preserves the latest native upstream support", () => {
+  assert.equal(
+    applyLinuxChromeExtensionPatch(latestNativeLinuxFixture),
+    latestNativeLinuxFixture,
   );
 });

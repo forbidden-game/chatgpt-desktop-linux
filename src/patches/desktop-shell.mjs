@@ -20,6 +20,14 @@ const NATIVE_LINUX_TRAY_SUPPORT = [
   "function _8(e){let{width:t,height:n}=e.getSize();return!t||!n||t<=g8&&n<=g8?e:e.resize({width:g8,height:g8,quality:`best`})}",
 ];
 
+const LATEST_NATIVE_LINUX_TRAY_SUPPORT = [
+  "case n.rl.ChatGPT:return[`chatgptTemplate.png`,`chatgptTemplate@2x.png`]",
+  "process.platform===`linux`){this.tray.on(`click`,()=>{this.onOpenMainWindow()}),this.updatePersistentTrayMenu();return}",
+  "updatePersistentTrayMenu(){process.platform===`linux`&&this.tray.setContextMenu(l.Menu.buildFromTemplate(this.getNativeTrayMenuItems()))}",
+  "if((process.platform===`win32`||process.platform===`linux`)&&!this.isAppQuitting&&this.options.canHideLastWindowToTray?.()===!0&&!t){",
+  "function g8(e){let{width:t,height:n}=e.getSize();return!t||!n||t<=h8&&n<=h8?e:e.resize({width:h8,height:h8,quality:`best`})}",
+];
+
 const NATIVE_LINUX_REPLACEMENTS = [
   [
     "async function gj(e){let t=e;if(typeof t.whenReady!=`function`)return process.platform!==`linux`;try{return await t.whenReady(),!0}catch{return!1}}",
@@ -36,6 +44,25 @@ const NATIVE_LINUX_REPLACEMENTS = [
   [
     "{label:A8(this.appName),click:()=>{c.app.quit()}}]}updateChronicleTrayIcon",
     `{label:A8(this.appName),click:()=>{process.platform===\`linux\`&&!c.app.__linuxTrayQuitFallback&&(c.app.__linuxTrayQuitFallback=!0,c.app.once(\`will-quit\`,()=>{let e=setTimeout(()=>{c.app.exit(0)},${LINUX_QUIT_GRACE_MS});e.unref?.()})),c.app.quit()}}]}updateChronicleTrayIcon`,
+  ],
+];
+
+const LATEST_NATIVE_LINUX_REPLACEMENTS = [
+  [
+    "async function hj(e){let t=e;if(typeof t.whenReady!=`function`)return process.platform!==`linux`;try{return await t.whenReady(),!0}catch{return!1}}",
+    "async function hj(e){let t=e;if(typeof t.whenReady!=`function`)return!0;try{return await t.whenReady(),!0}catch{return!1}}",
+  ],
+  [
+    "function gj(e){let t=e;return typeof t.isReady==`function`?t.isReady():process.platform!==`linux`}",
+    "function gj(e){let t=e;return typeof t.isReady==`function`?t.isReady():!0}",
+  ],
+  [
+    "color:k9,symbolColor:l.nativeTheme.shouldUseDarkColors?Nie:Mie",
+    "color:process.platform===`linux`?(l.nativeTheme.shouldUseDarkColors?`#1f1f1f`:`#f9f9f9`):k9,symbolColor:l.nativeTheme.shouldUseDarkColors?Nie:Mie",
+  ],
+  [
+    "{label:k8(this.appName),click:()=>{l.app.quit()}}]}updateChronicleTrayIcon",
+    `{label:k8(this.appName),click:()=>{process.platform===\`linux\`&&!l.app.__linuxTrayQuitFallback&&(l.app.__linuxTrayQuitFallback=!0,l.app.once(\`will-quit\`,()=>{let e=setTimeout(()=>{l.app.exit(0)},${LINUX_QUIT_GRACE_MS});e.unref?.()})),l.app.quit()}}]}updateChronicleTrayIcon`,
   ],
 ];
 
@@ -113,6 +140,13 @@ function replaceExactlyOneVariant(source, variants) {
 
 export function applyLinuxDesktopShellPatch(source) {
   if (source.includes(MARKER)) return source;
+  if (LATEST_NATIVE_LINUX_TRAY_SUPPORT.every((snippet) => source.includes(snippet))) {
+    const patched = LATEST_NATIVE_LINUX_REPLACEMENTS.reduce(
+      (current, [original, replacement]) => replaceExactlyOnce(current, original, replacement),
+      source,
+    );
+    return `${MARKER}${patched}`;
+  }
   if (
     NATIVE_LINUX_TRAY_ICON_VARIANTS.some((snippet) => source.includes(snippet)) &&
     NATIVE_LINUX_TRAY_SUPPORT.every((snippet) => source.includes(snippet))

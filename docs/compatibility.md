@@ -5,7 +5,7 @@ entry is not treated as proof that its Linux backend works.
 
 ## Build verified
 
-- ChatGPT `26.715.31925` with Electron `42.3.0`.
+- ChatGPT `26.715.52143` with Electron `42.3.0`.
 - complete assembly with all six fail-closed Linux compatibility checks
   satisfied.
 - deterministic Debian packaging and package-content smoke checks.
@@ -13,28 +13,28 @@ entry is not treated as proof that its Linux backend works.
 The official upstream bundle provides Chrome/Chromium discovery, Linux profile
 lookup, tray creation, persistent tray menus, close-to-tray, and tray icon
 sizing. The builder recognizes those exact native implementations and no longer
-patches their behavior. ChatGPT `26.715.31925` renames minified symbols around
-those implementations; exact fail-closed recognizers and regression fixtures
-cover the new bundle shape. The official Electron runtime does not expose the
-upstream bundle's optional `Tray.whenReady()` and `Tray.isReady()` extensions,
-so the builder preserves Electron's established constructor-ready behavior when
-those methods are absent. It also retains the Linux title-control surface, tray
-Quit fallback, desktop identity, X11 window suspension, memory probe, and Git
-watcher adaptations.
+patches their behavior. ChatGPT `26.715.52143` renames minified symbols around
+Chrome/Chromium discovery and native tray helpers; exact fail-closed
+recognizers and regression fixtures cover the new bundle shape. The official
+Electron runtime does not expose the upstream bundle's optional
+`Tray.whenReady()` and `Tray.isReady()` extensions, so the builder preserves
+Electron's established constructor-ready behavior when those methods are
+absent. It also retains the Linux title-control surface, tray Quit fallback,
+desktop identity, X11 window suspension, memory probe, and Git watcher
+adaptations.
 
 ## Runtime verified on Kubuntu
 
 An isolated packaged-runtime smoke test was repeated with ChatGPT
-`26.715.31925` and Electron `42.3.0`. In the current X11 desktop session, it
-verified X11 startup, GPU render-node ownership, the Electron renderer sandbox,
-local webview health, and the Codex CLI `0.144.1` app-server handshake. Real
+`26.715.52143` and Electron `42.3.0`. In the current Wayland desktop session,
+it verified Wayland startup, GPU render-node ownership, the Electron renderer
+sandbox, local webview health, and an isolated `chatgpt-smoke-52143b` Electron
+process using Codex CLI `0.144.1`. Real
 `node_repl` initialization and idle cleanup, plus bidirectional focus switching
 between overlapping maximized windows, were last repeated with `26.707.72221`.
-Native Wayland startup was last repeated with `26.707.71524`; the current test
-session has no Wayland display socket. KDE StatusNotifier registration and tray
-Quit were last verified with `26.707.61608`: invoking Quit through the DBus menu
-removed the Electron main process, all child processes, and the tray
-registration.
+KDE StatusNotifier registration and tray Quit were last verified with
+`26.707.61608`: invoking Quit through the DBus menu removed the Electron main
+process, all child processes, and the tray registration.
 
 The complete interactive runtime checks below were last repeated with ChatGPT
 `26.707.30751` and Electron `42.1.0`:
@@ -54,16 +54,16 @@ The complete interactive runtime checks below were last repeated with ChatGPT
 ## Performance regression check
 
 Idle CPU was last compared on the same Kubuntu machine with ChatGPT
-`26.715.21425` as the baseline and `26.715.31925` as the candidate. Each build
+`26.715.31925` as the baseline and `26.715.52143` as the candidate. Each build
 used its own temporary Electron profile, host configuration directory, Codex
 home, application ID, and webview port. This prevents an active task or an
 already-running application from contaminating the comparison.
 
 After a 40-second settling period, `pidstat` sampled the launcher and its full
 process tree for three consecutive 10-second intervals. Summing the per-process
-`Average` CPU values produced approximately `2.00%` for the baseline and
-`1.21%` for the candidate. The candidate stayed below the baseline, so the
-comparison passes.
+`Average` CPU values produced approximately `0.47%` for the baseline and
+`0.64%` for the candidate. The candidate was higher by `0.17` CPU percentage
+points, below the `0.5` absolute threshold, so the comparison passes.
 
 For future updates, use the same machine, display backend, settling time,
 isolated directories, and process-tree sampling. Treat a candidate as a likely
