@@ -5,7 +5,7 @@ entry is not treated as proof that its Linux backend works.
 
 ## Build verified
 
-- ChatGPT `26.715.52143` with Electron `42.3.0`.
+- ChatGPT `26.715.72359` with Electron `42.3.0`.
 - complete assembly with all six fail-closed Linux compatibility checks
   satisfied.
 - deterministic Debian packaging and package-content smoke checks.
@@ -21,14 +21,15 @@ Electron runtime does not expose the upstream bundle's optional
 Electron's established constructor-ready behavior when those methods are
 absent. It also retains the Linux title-control surface, tray Quit fallback,
 desktop identity, X11 window suspension, memory probe, and Git watcher
-adaptations.
+adaptations. ChatGPT `26.715.72359` keeps those recognized native bundle
+shapes, so the update required no compatibility-code changes.
 
 ## Runtime verified on Kubuntu
 
 An isolated packaged-runtime smoke test was repeated with ChatGPT
-`26.715.52143` and Electron `42.3.0`. In the current Wayland desktop session,
+`26.715.72359` and Electron `42.3.0`. In the current Wayland desktop session,
 it verified Wayland startup, GPU render-node ownership, the Electron renderer
-sandbox, local webview health, and an isolated `chatgpt-smoke-52143b` Electron
+sandbox, local webview health, and an isolated `chatgpt-smoke-72359` Electron
 process using Codex CLI `0.144.1`. Real
 `node_repl` initialization and idle cleanup, plus bidirectional focus switching
 between overlapping maximized windows, were last repeated with `26.707.72221`.
@@ -54,15 +55,15 @@ The complete interactive runtime checks below were last repeated with ChatGPT
 ## Performance regression check
 
 Idle CPU was last compared on the same Kubuntu machine with ChatGPT
-`26.715.31925` as the baseline and `26.715.52143` as the candidate. Each build
+`26.715.52143` as the baseline and `26.715.72359` as the candidate. Each build
 used its own temporary Electron profile, host configuration directory, Codex
 home, application ID, and webview port. This prevents an active task or an
 already-running application from contaminating the comparison.
 
 After a 40-second settling period, `pidstat` sampled the launcher and its full
 process tree for three consecutive 10-second intervals. Summing the per-process
-`Average` CPU values produced approximately `0.47%` for the baseline and
-`0.64%` for the candidate. The candidate was higher by `0.17` CPU percentage
+`Average` CPU values produced approximately `0.37%` for the baseline and
+`0.47%` for the candidate. The candidate was higher by `0.10` CPU percentage
 points, below the `0.5` absolute threshold, so the comparison passes.
 
 For future updates, use the same machine, display backend, settling time,
